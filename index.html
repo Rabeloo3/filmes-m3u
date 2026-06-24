@@ -1,348 +1,197 @@
-let creds = { server: '', user: '', pass: '' };
-let clapprPlayer = null;
-let currentTab = 'live'; 
-let currentItems = [];
-let seriesCachedData = {};
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smarters Pro Web - TV & VOD</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/clappr@latest/dist/clappr.min.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-[#040712] text-slate-100 h-screen flex flex-col font-sans overflow-hidden select-none">
 
-function updateClock() {
-    const clockEl = document.getElementById('dashboard-clock');
-    setInterval(() => {
-        const now = new Date(); let hours = now.getHours(); const minutes = String(now.getMinutes()).padStart(2, '0');
-        const ampm = hours >= 12 ? 'PM' : 'AM'; hours = hours % 12 || 12;
-        const m = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
-        if (clockEl) clockEl.innerText = `${String(hours).padStart(2, '0')}:${minutes} ${ampm} ${m[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
-    }, 1000);
-}
-updateClock();
+    <div id="login-screen" class="absolute inset-0 z-50 flex items-center justify-center bg-[#050814] px-4">
+        <div class="bg-[#0d1527] border border-slate-800/80 p-8 rounded-2xl shadow-2xl max-w-md w-full space-y-6">
+            <div class="text-center">
+                <div class="flex items-center justify-center gap-2 mb-2">
+                    <i class="fa-solid fa-tv text-xl text-indigo-400"></i>
+                    <span class="font-bold text-lg tracking-wider">IPTV<span class="text-indigo-400">SMARTERS</span></span>
+                </div>
+                <p id="login-status-subtitle" class="text-xs text-slate-400">Acesse usando suas credenciais Xtream API</p>
+            </div>
 
-async function fetchWithFallback(url) {
-    const proxies = [
-        `https://corsproxy.io/?${encodeURIComponent(url)}`,
-        `https://api.allorigins.win/get?url=${encodeURIComponent(url)}&_=${Date.now()}`
-    ];
-    for (let p of proxies) {
-        try {
-            const res = await fetch(p);
-            if (res.ok) {
-                const data = await res.json();
-                return p.includes('allorigins') ? JSON.parse(data.contents) : data;
-            }
-        } catch (err) {}
-    }
-    throw new Error("Servidor inacessível.");
-}
+            <form id="login-form" class="space-y-4" onsubmit="handleManualLogin(event)">
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Servidor (URL)</label>
+                    <input type="text" id="server" required placeholder="http://exemplo.com:8080"
+                           class="w-full bg-[#050814] border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 transition text-slate-200">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Usuário</label>
+                    <input type="text" id="username" required placeholder="Seu usuário"
+                           class="w-full bg-[#050814] border border-slate-800 rounded-xl px-4 py-2.5 text-sm focus:border-indigo-500 transition text-slate-200">
+                </div>
+                <div>
+                    <label class="block text-[10px] font-bold text-slate-400 uppercase tracking-wider mb-1">Senha</label>
+                    <div class="relative">
+                        <input type="password" id="password" required placeholder="••••••••"
+                               class="w-full bg-[#050814] border border-slate-800 rounded-xl pl-4 pr-11 py-2.5 text-sm focus:border-indigo-500 transition text-slate-200">
+                        <button type="button" onclick="togglePasswordVisibility()" title="Mostrar/Ocultar senha"
+                                class="absolute inset-y-0 right-0 pr-3.5 flex items-center text-slate-500 hover:text-indigo-400 transition cursor-pointer">
+                            <i id="password-eye-icon" class="fa-solid fa-eye text-sm"></i>
+                        </button>
+                    </div>
+                </div>
 
-function togglePasswordVisibility() {
-    const passInput = document.getElementById('password'); const eyeIcon = document.getElementById('password-eye-icon');
-    if (passInput && eyeIcon) {
-        if (passInput.type === 'password') { passInput.type = 'text'; eyeIcon.className = 'fa-solid fa-eye-slash text-sm'; } 
-        else { passInput.type = 'password'; eyeIcon.className = 'fa-solid fa-eye text-sm'; }
-    }
-}
+                <button type="submit" id="btn-login"
+                        class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-semibold py-2.5 rounded-xl transition flex items-center justify-center gap-2 shadow-lg shadow-indigo-600/20 text-sm mt-2">
+                    <span>Entrar no Servidor</span>
+                    <i class="fa-solid fa-arrow-right text-xs"></i>
+                </button>
+            </form>
+            <div id="login-error" class="hidden bg-red-950/60 border border-red-500/40 text-red-200 text-xs p-3 rounded-xl text-left whitespace-pre-line"></div>
+        </div>
+    </div>
 
-async function handleManualLogin(e) {
-    e.preventDefault();
-    const server = document.getElementById('server').value.trim().replace(/\/$/, '');
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value.trim();
-    await executeLogin(server, user, pass, false);
-}
+    <div id="dashboard-screen" class="hidden flex-1 flex flex-col justify-between p-6 max-w-7xl mx-auto w-full h-full overflow-y-auto">
+        <header class="flex items-center justify-between w-full border-b border-slate-800/40 pb-4">
+            <div class="flex items-center gap-6">
+                <div class="flex items-baseline font-sans">
+                    <span class="text-xl font-light tracking-tight text-white flex items-center gap-1">
+                        <i class="fa-solid fa-tv text-indigo-400 text-lg"></i> IPTV<span class="font-black tracking-wide text-white">SMARTERS</span>
+                    </span>
+                    <span class="text-[10px] font-bold text-indigo-400 ml-1 uppercase">Pro</span>
+                </div>
+                <div id="dashboard-clock" class="text-xs font-semibold text-slate-400 tracking-wide bg-slate-900/40 px-3 py-1 rounded-full border border-slate-800/30">
+                    --:--
+                </div>
+            </div>
 
-async function executeLogin(server, user, pass, isAutoLogin) {
-    const btn = document.getElementById('btn-login'); const errorBox = document.getElementById('login-error'); const subtitle = document.getElementById('login-status-subtitle');
-    errorBox.classList.add('hidden'); btn.disabled = true;
-    
-    if (isAutoLogin) { subtitle.innerHTML = `<span class="text-indigo-400 font-bold">Sessão detectada!</span> Reconectando...`; btn.innerHTML = `<i class="fa-solid fa-circle-notch fa-spin"></i> Entrando...`; } 
-    else btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Autenticando...`;
-
-    try {
-        const res = await fetchWithFallback(`${server}/player_api.php?username=${user}&password=${pass}`);
-        if (!res || (res.user_info && res.user_info.auth === 0)) throw new Error("Usuário ou senha incorretos.");
-
-        creds = { server, user, pass };
-        localStorage.setItem('smarters_web_session', JSON.stringify(creds));
-
-        if (res.user_info.exp_date) {
-            const d = new Date(res.user_info.exp_date * 1000); const m = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez'];
-            document.getElementById('info-expiration').innerText = `Expiração: ${d.getDate()} de ${m[d.getMonth()]} de ${d.getFullYear()}`;
-        } else document.getElementById('info-expiration').innerText = `Expiração: Ilimitado`;
-        
-        document.getElementById('info-username').innerText = `Conectado: ${user}`;
-        document.getElementById('login-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.remove('hidden');
-
-        setTimeout(() => {
-            const el = document.querySelector('[onclick="openFeature(\'live\')"]');
-            if (el) el.focus();
-        }, 200);
-
-    } catch (err) {
-        if (isAutoLogin) { localStorage.removeItem('smarters_web_session'); subtitle.innerText = "Acesse usando suas credenciais Xtream API"; }
-        errorBox.innerText = err.message || "Erro ao conectar com o servidor."; errorBox.classList.remove('hidden');
-    } finally {
-        btn.disabled = false; btn.innerHTML = `<span>Entrar no Servidor</span><i class="fa-solid fa-arrow-right text-xs"></i>`;
-    }
-}
-
-function checkPersistentSession() {
-    const saved = localStorage.getItem('smarters_web_session');
-    if (saved) {
-        try {
-            const cachedCreds = JSON.parse(saved);
-            if (cachedCreds.server && cachedCreds.user) {
-                document.getElementById('server').value = cachedCreds.server;
-                document.getElementById('username').value = cachedCreds.user;
-                document.getElementById('password').value = cachedCreds.pass;
-                executeLogin(cachedCreds.server, cachedCreds.user, cachedCreds.pass, true);
-            }
-        } catch(e) { localStorage.removeItem('smarters_web_session'); }
-    } else {
-        const srv = document.getElementById('server');
-        if (srv) srv.focus();
-    }
-}
-
-function logout() {
-    if (confirm("Tem certeza que deseja desconectar esta conta?")) {
-        if (clapprPlayer) clapprPlayer.destroy();
-        closeSeriesModal(); localStorage.removeItem('smarters_web_session');
-        creds = { server: '', user: '', pass: '' };
-        document.getElementById('inner-app-screen').classList.add('hidden');
-        document.getElementById('dashboard-screen').classList.add('hidden');
-        document.getElementById('login-screen').classList.remove('hidden');
-        document.getElementById('login-form').reset();
-        document.getElementById('password').type = 'password';
-        document.getElementById('password-eye-icon').className = 'fa-solid fa-eye text-sm';
-        document.getElementById('server').focus();
-    }
-}
-
-function openFeature(type) {
-    currentTab = type; document.getElementById('dashboard-screen').classList.add('hidden'); document.getElementById('inner-app-screen').classList.remove('hidden');
-    const menu = document.getElementById('menu-overlay'); menu.style.transform = 'translateX(0)'; document.getElementById('txt-toggle-menu').innerText = "Ocultar Menu";
-    const map = { 'live': 'TV AO VIVO', 'vod': 'FILMES', 'series': 'SÉRIES' }; document.getElementById('inner-view-title').innerText = map[type];
-    loadCategories();
-}
-
-function backToDashboard() {
-    if (clapprPlayer) clapprPlayer.destroy();
-    document.getElementById('player-placeholder').style.display = 'flex';
-    document.getElementById('inner-app-screen').classList.add('hidden');
-    document.getElementById('dashboard-screen').classList.remove('hidden');
-    const el = document.querySelector(`[onclick="openFeature(\'${currentTab}\')"]`);
-    if (el) el.focus();
-}
-
-function toggleMenuOverlay() {
-    const menu = document.getElementById('menu-overlay'); const txt = document.getElementById('txt-toggle-menu');
-    if (menu.style.transform === 'translateX(-100%)') { menu.style.transform = 'translateX(0)'; txt.innerText = "Ocultar Menu"; } 
-    else { menu.style.transform = 'translateX(-100%)'; txt.innerText = "Exibir Menu"; }
-}
-
-function handleVideoAreaClick() { const menu = document.getElementById('menu-overlay'); if (menu.style.transform === 'translateX(-100%)') toggleMenuOverlay(); }
-
-async function loadCategories() {
-    let act = currentTab === 'live' ? 'get_live_categories' : (currentTab === 'vod' ? 'get_vod_categories' : 'get_series_categories');
-    const list = document.getElementById('categories-list'); list.innerHTML = '<div class="text-[11px] text-slate-500 text-center py-6">Carregando...</div>';
-    try {
-        const cats = await fetchWithFallback(`${creds.server}/player_api.php?username=${creds.user}&password=${creds.pass}&action=${act}`);
-        list.innerHTML = '';
-        cats.forEach((cat, idx) => {
-            const btn = document.createElement('button');
-            btn.type = 'button';
-            btn.className = 'cat-item w-full flex items-center justify-between px-4 py-3 text-xs font-bold text-slate-300 cursor-pointer transition text-left focus:bg-smarters-cyan hover:bg-white/5';
-            btn.innerHTML = `<span class="truncate pr-2">${cat.category_name.toUpperCase()}</span><span class="text-[10px] text-slate-500 font-medium">#</span>`;
-            btn.onclick = () => { document.querySelectorAll('.cat-item').forEach(el => el.classList.remove('bg-smarters-cyan', 'text-white')); btn.classList.add('bg-smarters-cyan', 'text-white'); loadGridData(cat.category_id); };
-            list.appendChild(btn); if(idx === 0) { btn.click(); btn.focus(); }
-        });
-    } catch (e) { list.innerHTML = '<div class="text-[11px] text-red-400 text-center py-4">Erro ao listar.</div>'; }
-}
-
-async function loadGridData(catId) {
-    const grid = document.getElementById('channels-grid'); grid.innerHTML = '<div class="text-[11px] text-slate-500 text-center py-12">Buscando...</div>';
-    let act = currentTab === 'live' ? 'get_live_streams' : (currentTab === 'vod' ? 'get_vod_streams' : 'get_series');
-    try { currentItems = await fetchWithFallback(`${creds.server}/player_api.php?username=${creds.user}&password=${creds.pass}&action=${act}&category_id=${catId}`); renderGrid(currentItems); } 
-    catch (e) { grid.innerHTML = '<div class="text-[11px] text-red-400 text-center py-12">Erro ao carregar itens.</div>'; }
-}
-
-function renderGrid(items) {
-    const grid = document.getElementById('channels-grid'); grid.innerHTML = '';
-    if (!Array.isArray(items) || items.length === 0) { grid.innerHTML = '<div class="text-[11px] text-slate-600 text-center py-12">Nenhum conteúdo.</div>'; return; }
-    const defLogo = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect></svg>';
-
-    if (currentTab === 'live') {
-        grid.className = 'divide-y divide-white/[0.04] flex flex-col';
-        items.forEach(item => {
-            const btn = document.createElement('button'); btn.type = 'button';
-            btn.className = 'channel-item w-full flex items-center gap-3 px-4 py-2.5 cursor-pointer transition text-left hover:bg-white/[0.02]';
-            btn.innerHTML = `
-                <div class="w-7 h-7 flex items-center justify-center bg-slate-950/40 rounded p-0.5 shrink-0 border border-white/[0.03]"><img src="${item.stream_icon || defLogo}" onerror="this.src='${defLogo}'" class="max-h-full max-w-full object-contain"></div>
-                <div class="truncate flex-1"><p class="text-xs font-bold text-slate-200 truncate">${item.name}</p><p class="text-[10px] text-slate-500 font-medium truncate mt-0.5">AO VIVO</p></div>
-            `;
-            btn.onclick = () => {
-                document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('bg-smarters-cyan')); btn.classList.add('bg-smarters-cyan');
+            <div class="flex items-center gap-4 text-slate-300">
+                <button type="button" class="flex items-center gap-2 bg-slate-900/40 border border-slate-800/60 px-3 py-1.5 rounded-xl text-xs hover:text-white transition">
+                    <i class="fa-solid fa-magnifying-glass text-slate-400 text-xs"></i>
+                    <span class="font-medium">Master Search</span>
+                </button>
+                <button type="button" class="hover:text-white transition w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center"><i class="fa-solid fa-user text-xs"></i></button>
+                <button type="button" class="hover:text-white transition w-8 h-8 rounded-full bg-slate-900 flex items-center justify-center"><i class="fa-solid fa-gear text-xs"></i></button>
                 
-                const urlPadrao = `${creds.server}/live/${creds.user}/${creds.pass}/${item.stream_id}.m3u8`;
-                const fallbackXUI = `${creds.server}/${creds.user}/${creds.pass}/${item.stream_id}.m3u8`;
-                const fallbackTS = `${creds.server}/live/${creds.user}/${creds.pass}/${item.stream_id}.ts`;
+                <button type="button" onclick="logout()" title="Desconectar" 
+                        class="flex items-center gap-1.5 bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-xl text-xs font-bold transition">
+                    <i class="fa-solid fa-right-from-bracket"></i>
+                    <span>Sair</span>
+                </button>
+            </div>
+        </header>
 
-                launchStream(urlPadrao, [fallbackXUI, fallbackTS]);
-            };
-            grid.appendChild(btn);
-        });
-    } else {
-        grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3';
-        items.forEach(item => {
-            const btn = document.createElement('button'); btn.type = 'button';
-            const posterImg = item.stream_icon || item.cover || defLogo;
-            
-            btn.className = 'channel-item poster-btn group relative flex flex-col bg-[#0d1527] border border-slate-800/80 rounded-xl overflow-hidden cursor-pointer text-left shadow-lg';
-            btn.innerHTML = `
-                <div class="w-full aspect-[2/3] bg-slate-950 flex items-center justify-center relative overflow-hidden">
-                    <img src="${posterImg}" onerror="this.src='${defLogo}'" class="w-full h-full object-cover">
-                    <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent opacity-0 group-hover:opacity-90 transition-opacity flex items-end p-2"><span class="text-[10px] font-bold text-cyan-400"><i class="fa-solid fa-play mr-1"></i> Reproduzir</span></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 my-auto w-full">
+            <button type="button" onclick="openFeature('live')" class="bg-gradient-to-br from-emerald-400 via-cyan-500 to-blue-600 rounded-2xl flex flex-col justify-between overflow-hidden shadow-xl min-h-[300px] cursor-pointer group transition duration-200 text-left border-0">
+                <div class="flex-1 flex flex-col items-center justify-center text-white gap-4 w-full">
+                    <div class="w-20 h-20 bg-white/10 rounded-full flex items-center justify-center backdrop-blur-sm border border-white/20 group-hover:scale-110 transition duration-300">
+                        <i class="fa-solid fa-desktop text-4xl"></i>
+                    </div>
+                    <span class="text-2xl font-black tracking-wider drop-shadow-md">TV AO VIVO</span>
                 </div>
-                <div class="p-2 flex flex-col justify-between flex-1 w-full bg-[#0d1527]">
-                    <p class="text-[11px] font-bold text-slate-200 line-clamp-2 leading-tight">${item.name}</p>
+                <div class="bg-indigo-950/40 backdrop-blur-md border-t border-white/10 px-4 py-2.5 flex items-center justify-between text-white/90 text-[11px] w-full">
+                    <span>Ultima atualização: <span class="font-semibold">Agora</span></span>
+                    <div class="w-6 h-6 bg-white rounded-md flex items-center justify-center text-slate-900 shadow"><i class="fa-solid fa-arrows-rotate text-[10px]"></i></div>
                 </div>
-            `;
-            btn.onclick = () => {
-                if (currentTab === 'vod') launchStream(`${creds.server}/movie/${creds.user}/${creds.pass}/${item.stream_id}.${item.container_extension || 'mp4'}`);
-                else openSeriesModal(item.series_id, item.name);
-            };
-            grid.appendChild(btn);
-        });
-    }
-}
+            </button>
 
-function launchStream(url, fallbacks = []) {
-    document.getElementById('player-placeholder').style.display = 'none'; 
-    if (clapprPlayer) clapprPlayer.destroy();
+            <div class="lg:col-span-2 flex flex-col gap-5">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                    <button type="button" onclick="openFeature('vod')" class="bg-gradient-to-br from-rose-500 to-amber-500 rounded-2xl flex flex-col justify-between overflow-hidden shadow-lg min-h-[180px] cursor-pointer group transition duration-200 text-left border-0">
+                        <div class="flex-1 flex flex-col items-center justify-center text-white gap-2 w-full">
+                            <i class="fa-solid fa-circle-play text-4xl opacity-90 group-hover:scale-110 transition duration-300"></i>
+                            <span class="text-xl font-black tracking-wider shadow-sm">FILMES</span>
+                        </div>
+                        <div class="bg-amber-950/30 backdrop-blur-md border-t border-white/10 px-4 py-2 flex items-center justify-between text-white/90 text-[11px] w-full">
+                            <span>Ultima atualização: <span class="font-semibold">Hoje</span></span>
+                            <div class="w-6 h-6 bg-white rounded-md flex items-center justify-center text-slate-900 shadow"><i class="fa-solid fa-arrows-rotate text-[10px]"></i></div>
+                        </div>
+                    </button>
 
-    let tentativaAtual = 0;
-    const listaUrls = [url, ...fallbacks];
+                    <button type="button" onclick="openFeature('series')" class="bg-gradient-to-br from-violet-600 to-sky-400 rounded-2xl flex flex-col justify-between overflow-hidden shadow-lg min-h-[180px] cursor-pointer group transition duration-200 text-left border-0">
+                        <div class="flex-1 flex flex-col items-center justify-center text-white gap-2 w-full">
+                            <i class="fa-solid fa-clapperboard text-4xl opacity-90 group-hover:scale-110 transition duration-300"></i>
+                            <span class="text-xl font-black tracking-wider shadow-sm">SÉRIES</span>
+                        </div>
+                        <div class="bg-violet-950/30 backdrop-blur-md border-t border-white/10 px-4 py-2 flex items-center justify-between text-white/90 text-[11px] w-full">
+                            <span>Ultima atualização: <span class="font-semibold">Hoje</span></span>
+                            <div class="w-6 h-6 bg-white rounded-md flex items-center justify-center text-slate-900 shadow"><i class="fa-solid fa-arrows-rotate text-[10px]"></i></div>
+                        </div>
+                    </button>
+                </div>
 
-    function tentarReproduzir(streamUrl) {
-        clapprPlayer = new Clappr.Player({ 
-            source: streamUrl, 
-            parentId: "#player-wrapper", 
-            width: '100%', 
-            height: '100%', 
-            autoPlay: true,
-            mimeType: streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : undefined,
-            playback: {
-                hlsjsConfig: {
-                    liveSyncDurationCount: 7,
-                    loader: Clappr.HLS.HLSJS.DefaultConfig.loader
-                }
-            }
-        });
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <button type="button" class="bg-[#569b73] p-3.5 rounded-xl flex items-center gap-3 cursor-pointer text-white/90 hover:bg-[#45805e] transition text-left"><i class="fa-solid fa-book-open text-sm"></i><span class="text-xs font-bold uppercase">EPG</span></button>
+                    <button type="button" class="bg-[#569b73] p-3.5 rounded-xl flex items-center gap-3 cursor-pointer text-white/90 hover:bg-[#45805e] transition text-left"><i class="fa-solid fa-table-cells-large text-sm"></i><span class="text-xs font-bold uppercase">Multi-Screen</span></button>
+                    <button type="button" class="bg-[#569b73] p-3.5 rounded-xl flex items-center gap-3 cursor-pointer text-white/90 hover:bg-[#45805e] transition text-left"><i class="fa-solid fa-clock-rotate-left text-sm"></i><span class="text-xs font-bold uppercase">Alcançar</span></button>
+                </div>
+            </div>
+        </div>
 
-        clapprPlayer.on(Clappr.Events.PLAYER_ERROR, () => {
-            tentativaAtual++;
-            if (tentativaAtual < listaUrls.length) {
-                console.warn(`[Auto-Fallback] Falha na rota ${tentativaAtual}. Tentando alternativa: ${listaUrls[tentativaAtual]}`);
-                if (clapprPlayer) clapprPlayer.destroy();
-                tentarReproduzir(listaUrls[tentativaAtual]);
-            } else {
-                console.error("[Erro] O servidor recusou todas as rotas de transmissão.");
-                const ph = document.getElementById('player-placeholder');
-                if (ph) {
-                    ph.style.display = 'flex';
-                    ph.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-5xl text-red-500"></i><p class="text-xs font-bold text-red-400 uppercase mt-2">Erro: Transmissão Indisponível ou Formato Incompatível</p>`;
-                }
-            }
-        });
-    }
+        <footer class="flex items-center justify-between w-full border-t border-slate-800/40 pt-4 text-xs font-medium text-slate-500">
+            <div id="info-expiration">Expiração: Verificando...</div>
+            <div id="info-username">Conectado: ---</div>
+        </footer>
+    </div>
 
-    tentarReproduzir(listaUrls[0]);
+    <div id="inner-app-screen" class="hidden absolute inset-0 w-full h-full z-10 flex overflow-hidden bg-black">
+        <div id="player-container" class="absolute inset-0 w-full h-full z-0 bg-black" onclick="handleVideoAreaClick()">
+            <div id="player-wrapper" class="w-full h-full absolute inset-0"></div>
+            <div id="player-placeholder" class="absolute inset-0 flex flex-col items-center justify-center text-slate-600 gap-3 bg-[#050814]">
+                <i class="fa-solid fa-play text-5xl opacity-30 animate-pulse text-indigo-500"></i>
+                <p class="text-xs font-bold uppercase tracking-widest text-slate-500">Selecione um canal ou filme para reproduzir</p>
+            </div>
+        </div>
 
-    const menu = document.getElementById('menu-overlay');
-    if (menu) menu.style.transform = 'translateX(-100%)';
-    const txt = document.getElementById('txt-toggle-menu');
-    if (txt) txt.innerText = "Exibir Menu";
-}
+        <div id="menu-overlay" class="absolute inset-y-0 left-0 w-full md:w-[70%] lg:w-[60%] xl:w-[50%] z-10 bg-slate-950/90 backdrop-blur-md flex flex-col border-r border-slate-800/40 transition-all duration-300">
+            <div class="p-4 flex items-center gap-4 border-b border-smarters-line shrink-0">
+                <button type="button" onclick="backToDashboard()" class="w-9 h-9 bg-[#3b3cb4] hover:bg-[#32339c] text-white rounded-full flex items-center justify-center shadow-lg transition-transform active:scale-95 shrink-0">
+                    <i class="fa-solid fa-arrow-left text-sm"></i>
+                </button>
+                <div>
+                    <h1 id="inner-view-title" class="font-black text-base tracking-wide text-white">Catálogo</h1>
+                    <p id="inner-view-subtitle" class="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Navegação Direta</p>
+                </div>
+                
+                <div class="ml-auto relative w-40 sm:w-48">
+                    <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-2.5 text-slate-500 text-[10px]"></i>
+                    <input type="text" id="search-channel" placeholder="Buscar..." onkeyup="filterChannels()"
+                           class="w-full bg-slate-900 border border-slate-800 rounded-lg pl-7 pr-2 py-1.5 text-xs focus:border-cyan-600 text-slate-200">
+                </div>
+            </div>
 
-async function openSeriesModal(sId, sName) {
-    document.getElementById('modal-series-title').innerText = sName; const sBox = document.getElementById('modal-seasons-box'); const eBox = document.getElementById('modal-episodes-box');
-    sBox.innerHTML = '...'; eBox.innerHTML = ''; document.getElementById('series-modal').classList.remove('hidden');
-    try {
-        const info = await fetchWithFallback(`${creds.server}/player_api.php?username=${creds.user}&password=${creds.pass}&action=get_series_info&series_id=${sId}`);
-        seriesCachedData = info.episodes || {}; sBox.innerHTML = '';
-        Object.keys(seriesCachedData).forEach((sNum, idx) => {
-            const btn = document.createElement('button'); btn.type = 'button'; btn.className = 'w-full text-left px-3 py-1.5 rounded text-xs font-bold text-slate-400 hover:bg-white/5'; btn.innerText = `Temporada ${sNum}`;
-            btn.onclick = () => { sBox.querySelectorAll('button').forEach(b => b.className = 'w-full text-left px-3 py-1.5 rounded text-xs font-bold text-slate-400 hover:bg-white/5'); btn.className = 'w-full text-left px-3 py-1.5 rounded text-xs font-black bg-indigo-600 text-white'; renderEpisodes(sNum); };
-            sBox.appendChild(btn); if(idx === 0) { btn.click(); btn.focus(); }
-        });
-    } catch(e) { sBox.innerHTML = 'Erro'; }
-}
+            <div class="flex-1 flex overflow-hidden">
+                <div id="categories-list" class="w-[40%] border-r border-smarters-line overflow-y-auto bg-black/20 flex flex-col divide-y divide-white/[0.04]"></div>
+                <div id="channels-grid-container" class="w-[60%] overflow-y-auto bg-black/10 flex flex-col">
+                    <div id="channels-grid"></div>
+                </div>
+            </div>
+        </div>
 
-function renderEpisodes(sNum) {
-    const box = document.getElementById('modal-episodes-box'); box.innerHTML = '';
-    (seriesCachedData[sNum] || []).forEach(ep => {
-        const btn = document.createElement('button'); btn.type = 'button'; 
-        btn.className = 'w-full text-left bg-slate-900/60 p-2.5 rounded border border-white/[0.03] font-bold cursor-pointer truncate text-slate-300 text-xs block hover:bg-white/5'; 
-        btn.innerText = ep.title || `Episódio ${ep.episode_num}`;
-        btn.onclick = () => { closeSeriesModal(); launchStream(`${creds.server}/series/${creds.user}/${creds.pass}/${ep.id}.${ep.container_extension || 'mp4'}`); };
-        box.appendChild(btn);
-    });
-}
+        <div class="absolute top-4 right-4 z-20 flex items-center gap-2">
+            <button type="button" onclick="toggleMenuOverlay()" id="btn-toggle-menu" class="bg-slate-900/90 hover:bg-indigo-600 border border-slate-700/60 text-white font-bold px-3 py-1.5 rounded-xl text-xs flex items-center gap-1.5 shadow-2xl transition">
+                <i class="fa-solid fa-expand"></i>
+                <span id="txt-toggle-menu">Ocultar Menu</span>
+            </button>
+        </div>
+    </div>
 
-function closeSeriesModal() { document.getElementById('series-modal').classList.add('hidden'); document.getElementById('search-channel').focus(); }
-function filterChannels() { const t = document.getElementById('search-channel').value.toLowerCase(); renderGrid(currentItems.filter(c => c.name.toLowerCase().includes(t))); }
+    <div id="series-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-md z-50 flex items-center justify-center p-4">
+        <div class="bg-[#0c1222] border border-slate-800 w-full max-w-3xl h-[75vh] rounded-2xl flex flex-col overflow-hidden shadow-2xl">
+            <div class="p-4 border-b border-slate-800 flex items-center justify-between bg-slate-950/40 shrink-0">
+                <h3 id="modal-series-title" class="font-black text-sm text-white truncate max-w-md">Série</h3>
+                <button type="button" onclick="closeSeriesModal()" class="text-slate-400 hover:text-white bg-slate-800 w-7 h-7 rounded-full flex items-center justify-center"><i class="fa-solid fa-xmark text-xs"></i></button>
+            </div>
+            <div class="flex-1 flex overflow-hidden">
+                <div class="w-44 border-r border-slate-800 bg-slate-950/20 overflow-y-auto p-2 space-y-1" id="modal-seasons-box"></div>
+                <div class="flex-1 overflow-y-auto p-3 space-y-1.5 bg-[#080d1a]" id="modal-episodes-box"></div>
+            </div>
+        </div>
+    </div>
 
-window.addEventListener('keydown', (e) => {
-    const setas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-    if (!setas.includes(e.key)) return;
-
-    const atual = document.activeElement;
-    if (atual && atual.tagName === 'INPUT' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
-
-    e.preventDefault();
-
-    const focaveis = Array.from(document.querySelectorAll('button:not([disabled]), input:not([disabled])'))
-        .filter(el => el.offsetParent !== null);
-
-    if (!atual || atual === document.body || !focaveis.includes(atual)) {
-        if (focaveis.length > 0) focaveis[0].focus(); return;
-    }
-
-    const retAtual = atual.getBoundingClientRect();
-    const centroAtual = { x: retAtual.left + retAtual.width / 2, y: retAtual.top + retAtual.height / 2 };
-
-    let melhorCandidato = null;
-    let menorDistancia = Infinity;
-
-    focaveis.forEach(candidato => {
-        if (candidato === atual) return;
-        const retCand = candidato.getBoundingClientRect();
-        const centroCand = { x: retCand.left + retCand.width / 2, y: retCand.top + retCand.height / 2 };
-
-        let direcaoCerta = false;
-        switch (e.key) {
-            case 'ArrowLeft':  direcaoCerta = centroCand.x < centroAtual.x - 5; break;
-            case 'ArrowRight': direcaoCerta = centroCand.x > centroAtual.x + 5; break;
-            case 'ArrowUp':    direcaoCerta = centroCand.y < centroAtual.y - 5; break;
-            case 'ArrowDown':  direcaoCerta = centroCand.y > centroAtual.y + 5; break;
-        }
-
-        if (direcaoCerta) {
-            const dx = centroCand.x - centroAtual.x; const dy = centroCand.y - centroAtual.y;
-            const distanciaPonderada = (e.key === 'ArrowLeft' || e.key === 'ArrowRight') 
-                ? Math.abs(dx) + Math.abs(dy) * 4 
-                : Math.abs(dy) + Math.abs(dx) * 4;
-
-            if (distanciaPonderada < menorDistancia) {
-                menorDistancia = distanciaPonderada;
-                melhorCandidato = candidato;
-            }
-        }
-    });
-
-    if (melhorCandidato) {
-        melhorCandidato.focus();
-        melhorCandidato.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
-    }
-});
-
-window.addEventListener('DOMContentLoaded', checkPersistentSession);
+    <script src="script.js"></script>
+</body>
+</html>
