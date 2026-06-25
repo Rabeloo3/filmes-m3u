@@ -10,7 +10,7 @@ function updateClock() {
         const now = new Date(); let hours = now.getHours(); const minutes = String(now.getMinutes()).padStart(2, '0');
         const ampm = hours >= 12 ? 'PM' : 'AM'; hours = hours % 12 || 12;
         const m = ['jan.', 'fev.', 'mar.', 'abr.', 'mai.', 'jun.', 'jul.', 'ago.', 'set.', 'out.', 'nov.', 'dez.'];
-        if (clockEl) clockEl.innerText = `${String(hours).padStart(2, '0')}:${minutes} ${ampm} ${m[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
+        clockEl.innerText = `${String(hours).padStart(2, '0')}:${minutes} ${ampm} ${m[now.getMonth()]} ${now.getDate()}, ${now.getFullYear()}`;
     }, 1000);
 }
 updateClock();
@@ -34,10 +34,8 @@ async function fetchWithFallback(url) {
 
 function togglePasswordVisibility() {
     const passInput = document.getElementById('password'); const eyeIcon = document.getElementById('password-eye-icon');
-    if (passInput && eyeIcon) {
-        if (passInput.type === 'password') { passInput.type = 'text'; eyeIcon.className = 'fa-solid fa-eye-slash text-sm'; } 
-        else { passInput.type = 'password'; eyeIcon.className = 'fa-solid fa-eye text-sm'; }
-    }
+    if (passInput.type === 'password') { passInput.type = 'text'; eyeIcon.className = 'fa-solid fa-eye-slash text-sm'; } 
+    else { passInput.type = 'password'; eyeIcon.className = 'fa-solid fa-eye text-sm'; }
 }
 
 async function handleManualLogin(e) {
@@ -71,10 +69,8 @@ async function executeLogin(server, user, pass, isAutoLogin) {
         document.getElementById('login-screen').classList.add('hidden');
         document.getElementById('dashboard-screen').classList.remove('hidden');
 
-        setTimeout(() => {
-            const el = document.querySelector('[onclick="openFeature(\'live\')"]');
-            if (el) el.focus();
-        }, 200);
+        // Foca no primeiro botão do Dashboard automaticamente
+        setTimeout(() => document.querySelector('[onclick="openFeature(\'live\')"]').focus(), 200);
 
     } catch (err) {
         if (isAutoLogin) { localStorage.removeItem('smarters_web_session'); subtitle.innerText = "Acesse usando suas credenciais Xtream API"; }
@@ -97,8 +93,7 @@ function checkPersistentSession() {
             }
         } catch(e) { localStorage.removeItem('smarters_web_session'); }
     } else {
-        const srv = document.getElementById('server');
-        if (srv) srv.focus();
+        document.getElementById('server').focus();
     }
 }
 
@@ -129,8 +124,7 @@ function backToDashboard() {
     document.getElementById('player-placeholder').style.display = 'flex';
     document.getElementById('inner-app-screen').classList.add('hidden');
     document.getElementById('dashboard-screen').classList.remove('hidden');
-    const el = document.querySelector(`[onclick="openFeature(\'${currentTab}\')"]`);
-    if (el) el.focus();
+    document.querySelector(`[onclick="openFeature(\'${currentTab}\')"]`).focus();
 }
 
 function toggleMenuOverlay() {
@@ -165,12 +159,16 @@ async function loadGridData(catId) {
     catch (e) { grid.innerHTML = '<div class="text-[11px] text-red-400 text-center py-12">Erro ao carregar itens.</div>'; }
 }
 
+/* =========================================================================
+   AQUI ESTÁ A GRADE DE CAPAS: Separa a renderização de TV da de Filmes
+========================================================================= */
 function renderGrid(items) {
     const grid = document.getElementById('channels-grid'); grid.innerHTML = '';
     if (!Array.isArray(items) || items.length === 0) { grid.innerHTML = '<div class="text-[11px] text-slate-600 text-center py-12">Nenhum conteúdo.</div>'; return; }
     const defLogo = 'data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="%23475569" stroke-width="2"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect></svg>';
 
     if (currentTab === 'live') {
+        // MODO LISTA VERTICAL (Canais de TV)
         grid.className = 'divide-y divide-white/[0.04] flex flex-col';
         items.forEach(item => {
             const btn = document.createElement('button'); btn.type = 'button';
@@ -181,25 +179,21 @@ function renderGrid(items) {
             `;
             btn.onclick = () => {
                 document.querySelectorAll('.channel-item').forEach(el => el.classList.remove('bg-smarters-cyan')); btn.classList.add('bg-smarters-cyan');
-                
-                const urlPadrao = `${creds.server}/live/${creds.user}/${creds.pass}/${item.stream_id}.m3u8`;
-                const fallbackXUI = `${creds.server}/${creds.user}/${creds.pass}/${item.stream_id}.m3u8`;
-                const fallbackTS = `${creds.server}/live/${creds.user}/${creds.pass}/${item.stream_id}.ts`;
-
-                launchStream(urlPadrao, [fallbackXUI, fallbackTS]);
+                launchStream(`${creds.server}/live/${creds.user}/${creds.pass}/${item.stream_id}.m3u8`);
             };
             grid.appendChild(btn);
         });
     } else {
+        // MODO GRADE DE POSTERS (Filmes e Séries)
         grid.className = 'grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 p-3';
         items.forEach(item => {
             const btn = document.createElement('button'); btn.type = 'button';
-            const posterImg = item.stream_icon || item.cover || defLogo;
+            const posterImg = item.stream_icon || item.cover || defLogo; // A Xtream API manda a capa no campo stream_icon para VOD
             
             btn.className = 'channel-item poster-btn group relative flex flex-col bg-[#0d1527] border border-slate-800/80 rounded-xl overflow-hidden cursor-pointer text-left shadow-lg';
             btn.innerHTML = `
                 <div class="w-full aspect-[2/3] bg-slate-950 flex items-center justify-center relative overflow-hidden">
-                    <img src="${posterImg}" onerror="this.src='${defLogo}'" class="w-full h-full object-cover">
+                    <img src="${posterImg}" onerror="this.src='${defLogo}
                     <div class="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent opacity-0 group-hover:opacity-90 transition-opacity flex items-end p-2"><span class="text-[10px] font-bold text-cyan-400"><i class="fa-solid fa-play mr-1"></i> Reproduzir</span></div>
                 </div>
                 <div class="p-2 flex flex-col justify-between flex-1 w-full bg-[#0d1527]">
@@ -215,52 +209,12 @@ function renderGrid(items) {
     }
 }
 
-function launchStream(url, fallbacks = []) {
-    document.getElementById('player-placeholder').style.display = 'none'; 
-    if (clapprPlayer) clapprPlayer.destroy();
-
-    let tentativaAtual = 0;
-    const listaUrls = [url, ...fallbacks];
-
-    function tentarReproduzir(streamUrl) {
-        clapprPlayer = new Clappr.Player({ 
-            source: streamUrl, 
-            parentId: "#player-wrapper", 
-            width: '100%', 
-            height: '100%', 
-            autoPlay: true,
-            mimeType: streamUrl.includes('.m3u8') ? 'application/x-mpegURL' : undefined,
-            playback: {
-                hlsjsConfig: {
-                    liveSyncDurationCount: 7,
-                    loader: Clappr.HLS.HLSJS.DefaultConfig.loader
-                }
-            }
-        });
-
-        clapprPlayer.on(Clappr.Events.PLAYER_ERROR, () => {
-            tentativaAtual++;
-            if (tentativaAtual < listaUrls.length) {
-                console.warn(`[Auto-Fallback] Falha na rota ${tentativaAtual}. Tentando alternativa: ${listaUrls[tentativaAtual]}`);
-                if (clapprPlayer) clapprPlayer.destroy();
-                tentarReproduzir(listaUrls[tentativaAtual]);
-            } else {
-                console.error("[Erro] O servidor recusou todas as rotas de transmissão.");
-                const ph = document.getElementById('player-placeholder');
-                if (ph) {
-                    ph.style.display = 'flex';
-                    ph.innerHTML = `<i class="fa-solid fa-triangle-exclamation text-5xl text-red-500"></i><p class="text-xs font-bold text-red-400 uppercase mt-2">Erro: Transmissão Indisponível ou Formato Incompatível</p>`;
-                }
-            }
-        });
-    }
-
-    tentarReproduzir(listaUrls[0]);
-
-    const menu = document.getElementById('menu-overlay');
-    if (menu) menu.style.transform = 'translateX(-100%)';
-    const txt = document.getElementById('txt-toggle-menu');
-    if (txt) txt.innerText = "Exibir Menu";
+function launchStream(url) {
+    document.getElementById('player-placeholder').style.display = 'none'; if (clapprPlayer) clapprPlayer.destroy();
+    clapprPlayer = new Clappr.Player({ source: url, parentId: "#player-wrapper", width: '100%', height: '100%', autoPlay: true });
+    // Recolhe o menu lateral para o usuário ver o vídeo imediatamente
+    document.getElementById('menu-overlay').style.transform = 'translateX(-100%)';
+    document.getElementById('txt-toggle-menu').innerText = "Exibir Menu";
 }
 
 async function openSeriesModal(sId, sName) {
@@ -291,15 +245,19 @@ function renderEpisodes(sNum) {
 function closeSeriesModal() { document.getElementById('series-modal').classList.add('hidden'); document.getElementById('search-channel').focus(); }
 function filterChannels() { const t = document.getElementById('search-channel').value.toLowerCase(); renderGrid(currentItems.filter(c => c.name.toLowerCase().includes(t))); }
 
+/* =========================================================================
+   MOTOR GEOMÉTRICO DE TECLADO (Navega em X e Y perfeitamente)
+========================================================================= */
 window.addEventListener('keydown', (e) => {
     const setas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
     if (!setas.includes(e.key)) return;
 
     const atual = document.activeElement;
-    if (atual && atual.tagName === 'INPUT' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
+    if (atual && atual.tagName === 'INPUT' && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return; // Permite andar no texto
 
     e.preventDefault();
 
+    // Captura apenas botões e inputs que estão visíveis na tela agora
     const focaveis = Array.from(document.querySelectorAll('button:not([disabled]), input:not([disabled])'))
         .filter(el => el.offsetParent !== null);
 
@@ -328,6 +286,7 @@ window.addEventListener('keydown', (e) => {
 
         if (direcaoCerta) {
             const dx = centroCand.x - centroAtual.x; const dy = centroCand.y - centroAtual.y;
+            // Penaliza desvios diagonais para priorizar a linha reta da seta
             const distanciaPonderada = (e.key === 'ArrowLeft' || e.key === 'ArrowRight') 
                 ? Math.abs(dx) + Math.abs(dy) * 4 
                 : Math.abs(dy) + Math.abs(dx) * 4;
