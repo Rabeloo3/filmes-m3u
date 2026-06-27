@@ -1,4 +1,19 @@
 /* ==========================================================
+   0. DESBLOQUEADOR DE HARDWARE (Específico para Samsung Tizen)
+========================================================== */
+function liberarTeclasTizen() {
+    if (typeof tizen !== 'undefined' && tizen.tvinputdevice) {
+        ['MediaPlay', 'MediaPause', 'MediaStop', 'MediaRewind', 'MediaFastForward',
+         '0','1','2','3','4','5','6','7','8','9',
+         'ColorF0Red', 'ColorF1Green', 'ColorF2Yellow', 'ColorF3Blue'].forEach(t => {
+            try { tizen.tvinputdevice.registerKey(t); } catch(e){}
+        });
+    }
+}
+window.addEventListener('DOMContentLoaded', liberarTeclasTizen);
+
+
+/* ==========================================================
    1. SISTEMA ANTI-MOUSE
 ========================================================== */
 window.addEventListener('click', (e) => {
@@ -26,7 +41,7 @@ const AudioEngine = {
             
             osc.type = 'sine';
             osc.frequency.setValueAtTime(600, this.ctx.currentTime);
-            gain.gain.setValueAtTime(0.015, this.ctx.currentTime); // Volume bem sutil
+            gain.gain.setValueAtTime(0.015, this.ctx.currentTime); 
             gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.035);
             
             osc.start(); osc.stop(this.ctx.currentTime + 0.035);
@@ -60,9 +75,9 @@ function showHUD(text, iconClass) {
 ========================================================== */
 let wakeLock = null;
 async function ativarModoImersivo() {
-    if (!document.fullscreenElement) {
+    if (!document.fullscreenElement && !document.webkitFullscreenElement) {
         const doc = document.documentElement;
-        const req = doc.requestFullscreen || doc.webkitRequestFullScreen || doc.mozRequestFullScreen;
+        const req = doc.requestFullscreen || doc.webkitRequestFullScreen || doc.mozRequestFullScreen || doc.msRequestFullscreen;
         if (req) req.call(doc).catch(() => {});
     }
     try {
@@ -72,7 +87,6 @@ async function ativarModoImersivo() {
     } catch(e) {}
 }
 
-// Previne que o botão "Back" físico da TV feche o aplicativo
 history.pushState(null, null, location.href);
 window.onpopstate = function () {
     history.pushState(null, null, location.href);
@@ -81,14 +95,25 @@ window.onpopstate = function () {
 
 
 /* ==========================================================
-   5. CÉREBRO PRINCIPAL DE NAVEGAÇÃO
+   5. CÉREBRO PRINCIPAL DE NAVEGAÇÃO UNIVERSAL
 ========================================================== */
 window.addEventListener('keydown', (e) => {
     ativarModoImersivo();
 
+    const code = e.keyCode || e.which;
+    const key = e.key;
+
+    // A. TRADUTOR DE MARCAS (Tizen, webOS, AndroidTV, Roku, Vidaa, Philips, Sony)
+    const ehVoltar = ['Escape', 'Backspace', 'GoBack'].includes(key) || [27, 8, 10009, 461].includes(code);
+    const ehOk     = key === 'Enter' || code === 13;
+    const ehPlay   = key === 'MediaPlayPause' || key === 'Play' || [415, 19, 10252].includes(code);
+    const ehPause  = key === 'Pause' || code === 19;
+    const ehStop   = key === 'Stop' || code === 413;
+    const ehFwd    = key === 'FastForward' || code === 417;
+    const ehRew    = key === 'Rewind' || code === 412;
+
     const elAtivo = document.activeElement;
     const digitando = elAtivo && elAtivo.tagName === 'INPUT';
-    const teclaVoltar = ['Escape', 'Backspace', 'GoBack'].includes(e.key) || [27, 8, 10009, 461].includes(e.keyCode);
 
     const modalSeries = document.getElementById('series-modal');
     const telaApp = document.getElementById('inner-app-screen');
@@ -96,10 +121,10 @@ window.addEventListener('keydown', (e) => {
 
     const modalAberto = modalSeries && !modalSeries.classList.contains('hidden');
     const noCatalogo = telaApp && !telaApp.classList.contains('hidden');
-    const telaLimpaVideo = noCatalogo && menuOverlay.style.transform === 'translateX(-100%)';
+    const telaLimpaVideo = noCatalogo && menuOverlay && menuOverlay.style.transform === 'translateX(-100%)';
 
-    // A. BOTÃO VOLTAR
-    if (teclaVoltar && !digitando) {
+    // B. LÓGICA DO BOTÃO VOLTAR
+    if (ehVoltar && !digitando) {
         e.preventDefault();
         if (modalAberto) { closeSeriesModal(); return; }
         if (telaLimpaVideo) {
@@ -114,40 +139,46 @@ window.addEventListener('keydown', (e) => {
         return;
     }
 
-    // B. CONTROLES DE MÍDIA (VÍDEO EM TELA CHEIA)
-    if (telaLimpaVideo && clapprPlayer) {
-        if (e.key === 'Enter' || e.key === ' ') {
+    // C. CONTROLES DE MÍDIA (VÍDEO EM TELA CHEIA)
+    if (telaLimpaVideo && typeof clapprPlayer !== 'undefined' && clapprPlayer) {
+        
+        // Play / Pause (Aceita tanto o 'OK' central quanto os botões físicos dedicados da TV)
+        if (ehOk || key === ' ' || ehPlay || ehPause) {
             e.preventDefault();
             if (clapprPlayer.isPlaying()) { clapprPlayer.pause(); showHUD("Pausado", "fa-solid fa-pause"); }
             else { clapprPlayer.play(); showHUD("Reproduzindo", "fa-solid fa-play"); }
             return;
         }
-        if (e.key === 'ArrowRight') {
+        if (ehStop) {
+            e.preventDefault();
+            clapprPlayer.stop(); showHUD("Parado", "fa-solid fa-stop"); return;
+        }
+        if (key === 'ArrowRight' || ehFwd) {
             e.preventDefault();
             clapprPlayer.seek(clapprPlayer.getCurrentTime() + 10);
             showHUD("+10 Segundos", "fa-solid fa-forward"); return;
         }
-        if (e.key === 'ArrowLeft') {
+        if (key === 'ArrowLeft' || ehRew) {
             e.preventDefault();
             clapprPlayer.seek(Math.max(0, clapprPlayer.getCurrentTime() - 10));
             showHUD("-10 Segundos", "fa-solid fa-backward"); return;
         }
-        if (e.key === 'ArrowUp') {
+        if (key === 'ArrowUp') {
             e.preventDefault();
             const nVol = Math.min(100, clapprPlayer.getVolume() + 10);
             clapprPlayer.setVolume(nVol); showHUD(`Volume: ${nVol}%`, "fa-solid fa-volume-high"); return;
         }
-        if (e.key === 'ArrowDown') {
+        if (key === 'ArrowDown') {
             e.preventDefault();
             const nVol = Math.max(0, clapprPlayer.getVolume() - 10);
             clapprPlayer.setVolume(nVol); showHUD(`Volume: ${nVol}%`, nVol === 0 ? "fa-solid fa-volume-xmark" : "fa-solid fa-volume-low"); return;
         }
     }
 
-    // C. NAVEGAÇÃO ESPACIAL
+    // D. NAVEGAÇÃO ESPACIAL GEOMÉTRICA
     const setas = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
-    if (!setas.includes(e.key)) return;
-    if (digitando && (e.key === 'ArrowLeft' || e.key === 'ArrowRight')) return;
+    if (!setas.includes(key)) return;
+    if (digitando && (key === 'ArrowLeft' || key === 'ArrowRight')) return;
 
     e.preventDefault();
 
@@ -166,20 +197,20 @@ window.addEventListener('keydown', (e) => {
         const centroC = { x: retC.left + retC.width / 2, y: retC.top + retC.height / 2 };
 
         let ok = false;
-        if (e.key === 'ArrowLeft') ok = centroC.x < centroA.x - 5;
-        if (e.key === 'ArrowRight') ok = centroC.x > centroA.x + 5;
-        if (e.key === 'ArrowUp') ok = centroC.y < centroA.y - 5;
-        if (e.key === 'ArrowDown') ok = centroC.y > centroA.y + 5;
+        if (key === 'ArrowLeft')  ok = centroC.x < centroA.x - 5;
+        if (key === 'ArrowRight') ok = centroC.x > centroA.x + 5;
+        if (key === 'ArrowUp')    ok = centroC.y < centroA.y - 5;
+        if (key === 'ArrowDown')  ok = centroC.y > centroA.y + 5;
 
         if (ok) {
             const dx = centroC.x - centroA.x; const dy = centroC.y - centroA.y;
-            const dist = (e.key === 'ArrowLeft' || e.key === 'ArrowRight') ? Math.abs(dx) + Math.abs(dy) * 4 : Math.abs(dy) + Math.abs(dx) * 4;
+            const dist = (key === 'ArrowLeft' || key === 'ArrowRight') ? Math.abs(dx) + Math.abs(dy) * 4 : Math.abs(dy) + Math.abs(dx) * 4;
             if (dist < menorDist) { menorDist = dist; melhor = cand; }
         }
     });
 
     if (melhor) {
-        AudioEngine.play(); // EMITE O SOM DE CLIQUE NATIVO
+        AudioEngine.play(); 
         melhor.focus();
         melhor.scrollIntoView({ block: 'nearest', inline: 'nearest', behavior: 'smooth' });
     }
