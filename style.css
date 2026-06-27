@@ -1,0 +1,37 @@
+/* Custom Scrollbars */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: rgba(15, 23, 42, 0.4); }
+::-webkit-scrollbar-thumb { background: rgba(51, 65, 85, 0.6); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(99, 102, 241, 0.8); }
+
+.bg-smarters-cyan { background-color: #005d73; }
+.border-smarters-line { border-color: rgba(255, 255, 255, 0.08); }
+
+/* Transições das Telas (Views) */
+.nav-view { transition: opacity 0.3s ease-in-out; }
+.nav-view.view-active { animation: fadeInView 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards; display: flex !important; }
+
+@keyframes fadeInView {
+    from { opacity: 0; transform: translateY(10px) scale(0.99); }
+    to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* Foco e Botões */
+button, input { transition: transform 0.15s ease, border-color 0.15s ease, box-shadow 0.15s ease; }
+button:focus, input:focus {
+    outline: none !important;
+    border-color: #38bdf8 !important; 
+    box-shadow: 0 0 0 4px rgba(56, 189, 248, 0.4) !important; 
+    transform: scale(1.03);
+    z-index: 40;
+}
+
+.poster-btn:focus {
+    transform: scale(1.04);
+    border-color: #6366f1 !important;
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.8) !important;
+}
+input:focus { transform: scale(1.01); }
+
+/* MODO TV: FORÇAR OCULTAÇÃO DO MOUSE */
+*, *::before, *::after { cursor: none !important; }
