@@ -1,0 +1,184 @@
+/* ==========================================================\
+   1. SISTEMA ANTI-MOUSE
+========================================================== */
+window.addEventListener('click', (e) => {
+    if (e.detail !== 0) { e.preventDefault(); e.stopPropagation(); }
+}, { capture: true });
+
+['mousedown', 'mouseup', 'contextmenu', 'dblclick', 'mousemove'].forEach(evt => {
+    window.addEventListener(evt, (e) => { e.preventDefault(); e.stopPropagation(); }, { capture: true });
+});
+
+/* ==========================================================\
+   2. MOTOR DE ÁUDIO SINTÉTICO (Efeito de clique de TV)
+========================================================== */
+const AudioEngine = {
+    ctx: null,
+    play() {
+        try {
+            if (!this.ctx) this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+            if (this.ctx.state === 'suspended') this.ctx.resume();
+            
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.connect(gain); gain.connect(this.ctx.destination);
+            
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(600, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.015, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.035);
+            
+            osc.start(); osc.stop(this.ctx.currentTime + 0.035);
+        } catch(e) {}
+    }
+};
+
+/* ==========================================================\
+   3. SUPORTE A TELA CHEIA AUTOMÁTICA (Smart TV)
+========================================================== */
+function ativarEcraInteiro() {
+    const docEl = document.documentElement;
+    if (docEl.requestFullscreen) {
+        docEl.requestFullscreen();
+    } else if (docEl.webkitRequestFullscreen) { /* Sistemas WebKit: Smart TVs LG e Samsung */
+        docEl.webkitRequestFullscreen();
+    } else if (docEl.mozRequestFullScreen) {
+        docEl.mozRequestFullScreen();
+    } else if (docEl.msRequestFullscreen) {
+        docEl.msRequestFullscreen();
+    }
+}
+
+// Dispara a tela cheia no primeiro comando físico enviado à TV
+const forcarEcraInteiroEvent = () => {
+    ativarEcraInteiro();
+    window.removeEventListener('keydown', forcarEcraInteiroEvent, { capture: true });
+    window.removeEventListener('click', forcarEcraInteiroEvent, { capture: true });
+};
+window.addEventListener('keydown', forcarEcraInteiroEvent, { capture: true });
+window.addEventListener('click', forcarEcraInteiroEvent, { capture: true });
+
+/* ==========================================================\
+   4. NAVEGAÇÃO ESPACIAL AVANÇADA (100% Controle) + TIZEN
+========================================================== */
+window.addEventListener('keydown', (e) => {
+    const teclasNavegacao = ['ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight'];
+    const teclasAcao = ['Enter', 'NumpadEnter'];
+    const teclasVoltar = ['Escape', 'Backspace', 'GoBack']; // Algumas TVs mapeiam voltar como 'GoBack'
+    
+    // Códigos de TV específicos
+    const TIZEN_BACK_CODE = 10009;
+    const keyCode = e.keyCode || e.which;
+
+    // Obter todos os elementos focáveis e visíveis
+    const focaveis = Array.from(document.querySelectorAll('button:not([disabled]), input:not([disabled]), [tabindex="0"]'))
+        .filter(el => el.offsetWidth > 0 && el.offsetHeight > 0 && window.getComputedStyle(el).visibility !== 'hidden');
+
+    let elAtivo = document.activeElement;
+
+    // Se nada estiver focado, foca no primeiro elemento disponível
+    if (!elAtivo || elAtivo === document.body || !focaveis.includes(elAtivo)) {
+        if (focaveis.length > 0) {
+            focaveis[0].focus();
+            AudioEngine.play();
+        }
+        return;
+    }
+
+    // Ação: Enter
+    if (teclasAcao.includes(e.key) || keyCode === 13) {
+        e.preventDefault();
+        elAtivo.click();
+        AudioEngine.play();
+        return;
+    }
+
+    // Ação: Voltar (Escape / Backspace / TIZEN Return)
+    if (teclasVoltar.includes(e.key) || keyCode === TIZEN_BACK_CODE) {
+        e.preventDefault();
+        
+        // Lógica de fechamento obrigatória da Samsung (se estiver na raiz do app)
+        // Substitua 'true' pela sua lógica real que verifica se não há modais/subtelas abertas
+        const naTelaInicial = true; 
+        
+        if (keyCode === TIZEN_BACK_CODE && naTelaInicial) {
+            try {
+                tizen.application.getCurrentApplication().exit();
+            } catch (error) {
+                console.error("Ambiente não-Tizen ou erro ao sair:", error);
+            }
+            return;
+        }
+
+        // Navegação de retorno interna (fechar players, modais, etc)
+        const btnVoltar = document.querySelector('#btn-back-player:not(.hidden)');
+        if (btnVoltar) btnVoltar.click();
+        return;
+    }
+
+    // Navegação Direcional
+    if (teclasNavegacao.includes(e.key) || (keyCode >= 37 && keyCode <= 40)) {
+        e.preventDefault(); // Impede o scroll nativo da página
+        
+        // Mapeamento seguro da chave da direção (para lidar com e.key ou keyCode)
+        let direcao = e.key;
+        if (!teclasNavegacao.includes(direcao)) {
+            if (keyCode === 37) direcao = 'ArrowLeft';
+            if (keyCode === 38) direcao = 'ArrowUp';
+            if (keyCode === 39) direcao = 'ArrowRight';
+            if (keyCode === 40) direcao = 'ArrowDown';
+        }
+
+        const retA = elAtivo.getBoundingClientRect();
+        const centroA = { x: retA.left + retA.width / 2, y: retA.top + retA.height / 2 };
+        
+        let melhorCandidato = null;
+        let menorPontuacao = Infinity;
+
+        focaveis.forEach(cand => {
+            if (cand === elAtivo) return;
+            const retC = cand.getBoundingClientRect();
+            const centroC = { x: retC.left + retC.width / 2, y: retC.top + retC.height / 2 };
+
+            let valido = false;
+            let distPrincipal = 0;
+            let distSecundaria = 0;
+
+            // Define o cone de visão para cada direção e calcula as distâncias
+            if (direcao === 'ArrowLeft' && centroC.x < centroA.x) {
+                valido = true;
+                distPrincipal = Math.abs(centroC.x - centroA.x);
+                distSecundaria = Math.abs(centroC.y - centroA.y);
+            } else if (direcao === 'ArrowRight' && centroC.x > centroA.x) {
+                valido = true;
+                distPrincipal = Math.abs(centroC.x - centroA.x);
+                distSecundaria = Math.abs(centroC.y - centroA.y);
+            } else if (direcao === 'ArrowUp' && centroC.y < centroA.y) {
+                valido = true;
+                distPrincipal = Math.abs(centroC.y - centroA.y);
+                distSecundaria = Math.abs(centroC.x - centroA.x);
+            } else if (direcao === 'ArrowDown' && centroC.y > centroA.y) {
+                valido = true;
+                distPrincipal = Math.abs(centroC.y - centroA.y);
+                distSecundaria = Math.abs(centroC.x - centroA.x);
+            }
+
+            if (valido) {
+                // Penaliza a distância secundária para forçar movimentos em linha reta
+                const pontuacao = distPrincipal + (distSecundaria * 2.5);
+                if (pontuacao < menorPontuacao) {
+                    menorPontuacao = pontuacao;
+                    melhorCandidato = cand;
+                }
+            }
+        });
+
+        if (melhorCandidato) {
+            melhorCandidato.focus();
+            AudioEngine.play();
+            
+            // Faz a tela rolar para manter o elemento focado visível, centralizando suavemente
+            melhorCandidato.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' });
+        }
+    }
+});
