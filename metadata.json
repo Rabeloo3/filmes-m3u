@@ -1,0 +1,6 @@
+{
+  "name": "Rabelo IPTV",
+  "description": "Player Premium de IPTV - TV ao Vivo, Filmes e Séries compatível com Xtream Codes API, com suporte a mouse e teclado.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
