@@ -1,0 +1,29 @@
+{
+    "admins": [
+        "admin",
+        "rabelo"
+    ],
+    "trial_horas": 24,
+    "valor_mensal": 1,
+    "pix_chave": "da706261-b06e-4dcd-8da2-758af91bda4c",
+    "whatsapp_suporte": "5598981052109",
+    "email_remetente": "noreply@rabelotv.com",
+    "smtp": {
+        "host": "",
+        "port": 587,
+        "user": "",
+        "pass": "",
+        "secure": false
+    },
+    "banidos": [
+        "rabelotvfamilia",
+        "rabelotvfamilia"
+    ],
+    "pix_nome": "RABELO TV",
+    "pix_cidade": "SAO PAULO",
+    "admin_password": "rabelo2024",
+    "manutencao": false,
+    "mensagem_manutencao": "Sistema em manutenção.",
+    "manutencao_previsao": "2 horas",
+    "manutencao_bloquear_login": false
+}

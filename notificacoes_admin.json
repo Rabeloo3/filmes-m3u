@@ -1,0 +1,38 @@
+{
+    "PAG_1787754254_fa196c": {
+        "tipo": "pagamento_pendente",
+        "usuario": "bras",
+        "correlation_id": "bras_m1_1787753912_354c67",
+        "meses": 1,
+        "valor": 1,
+        "criado": "2026-08-26T10:24:14-04:00",
+        "lida": true,
+        "mensagem": "💰 bras diz que pagou R$ 1,00 por 1 mês(es). Verificar extrato!",
+        "resolvida_em": "2026-08-26T14:41:52-04:00",
+        "resolvida_por": "170.247.30.89"
+    },
+    "PAG_1787755420_4a3e09": {
+        "tipo": "pagamento_pendente",
+        "usuario": "bara",
+        "correlation_id": "bara_m12_1787755416_fd616b",
+        "meses": 12,
+        "valor": 12,
+        "criado": "2026-08-26T10:43:40-04:00",
+        "lida": true,
+        "mensagem": "💰 bara diz que pagou R$ 12,00 por 12 mês(es). Verificar extrato!",
+        "resolvida_em": "2026-08-26T14:41:39-04:00",
+        "resolvida_por": "170.247.30.89"
+    },
+    "PAG_1787769769_74bdde": {
+        "tipo": "pagamento_pendente",
+        "usuario": "bara",
+        "correlation_id": "bara_m1_1787769765_237262",
+        "meses": 1,
+        "valor": 1,
+        "criado": "2026-08-26T14:42:49-04:00",
+        "lida": true,
+        "mensagem": "💰 bara diz que pagou R$ 1,00 por 1 mês(es). Verificar extrato!",
+        "resolvida_em": "2026-08-26T14:43:17-04:00",
+        "resolvida_por": "170.247.30.89"
+    }
+}

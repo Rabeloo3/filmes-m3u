@@ -1,0 +1,1656 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>RABELO TV - Premium Streamit</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://i.ytimg.com">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;900&display=swap" rel="stylesheet">
+    <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiUkFCRUxPIFRWIiwic2hvcnRfbmFtZSI6IlJBQkVMTyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjMDYwOTEzIiwidGhlbWVfY29sb3IiOiIjMDBlNWNmIn0=">
+    <meta name="theme-color" content="#00e5ff">
+    <script src="https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.min.js"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        :root {
+            --bg: #060913; --primary: #00e5ff; --text: #fff;
+            --muted: #8b95a5; --danger: #ff2a5f; --warning: #ffb800;
+            --success: #00ff88; --border: rgba(255,255,255,0.08);
+        }
+        html, body { width: 100%; height: 100%; font-family: 'Outfit', system-ui, sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; -webkit-font-smoothing: antialiased; }
+        body { background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0,229,255,0.06), transparent), var(--bg); }
+        img { display: block; max-width: 100%; }
+        button { font-family: inherit; }
+        .cv-auto { content-visibility: auto; contain-intrinsic-size: 1px 400px; }
+
+        #splash { position: fixed; inset: 0; z-index: 99999; background: radial-gradient(ellipse at center, #0a1530, #020409 70%); display: flex; align-items: center; justify-content: center; cursor: pointer; overflow: hidden; }
+        .splash-bg { position: absolute; inset: 0; background: radial-gradient(circle at 25% 30%, rgba(0,229,255,0.12), transparent 40%), radial-gradient(circle at 75% 70%, rgba(255,42,95,0.08), transparent 40%); }
+        .splash-orbit { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); border: 2px solid transparent; border-top-color: var(--primary); border-radius: 50%; animation: orbit 3s linear infinite; }
+        .splash-orbit-1 { width: 600px; height: 600px; }
+        .splash-orbit-2 { width: 700px; height: 700px; border-top-color: rgba(255,42,95,0.5); animation: orbit 5s linear infinite reverse; }
+        .splash-orbit-3 { width: 800px; height: 800px; border-top-color: rgba(0,255,136,0.4); animation: orbit 7s linear infinite; }
+        @keyframes orbit { to { transform: translate(-50%,-50%) rotate(360deg); } }
+        .splash-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 400px; height: 400px; background: radial-gradient(circle, rgba(0,229,255,0.25), transparent 60%); border-radius: 50%; animation: pulse 2.5s ease-in-out infinite; }
+        @keyframes pulse { 0%,100%{opacity:0.4;transform:translate(-50%,-50%) scale(1)} 50%{opacity:0.7;transform:translate(-50%,-50%) scale(1.2)} }
+        .splash-content { position: relative; z-index: 5; text-align: center; animation: appear 0.8s ease-out; }
+        @keyframes appear { from{opacity:0;transform:scale(0.85)} to{opacity:1;transform:scale(1)} }
+        .splash-logo { width: 700px; max-width: 90vw; height: auto; filter: drop-shadow(0 0 30px rgba(0,229,255,0.7)); }
+        .splash-logo text { font-family: 'Outfit', sans-serif; font-weight: 900; }
+        .splash-logo .r-main { font-size: 140px; letter-spacing: 15px; fill: var(--primary); animation: revealMain 1.5s 0.3s cubic-bezier(0.16,1,0.3,1) backwards; }
+        .splash-logo .r-sub { font-size: 50px; letter-spacing: 35px; fill: white; animation: revealSub 1.5s 0.9s cubic-bezier(0.16,1,0.3,1) backwards; }
+        @keyframes revealMain { from{opacity:0;letter-spacing:25px} to{opacity:1;letter-spacing:15px} }
+        @keyframes revealSub { from{opacity:0} to{opacity:1} }
+        .splash-tag { color: var(--muted); font-weight: 300; letter-spacing: 8px; font-size: 1rem; margin-top: 15px; animation: fadeIn 1s 1.5s backwards; }
+        .splash-loader { width: 300px; max-width: 80vw; height: 3px; background: rgba(255,255,255,0.05); border-radius: 50px; overflow: hidden; margin: 50px auto 0; animation: fadeIn 0.8s 1.8s backwards; }
+        .splash-loader-bar { height: 100%; width: 0; background: linear-gradient(90deg, var(--primary), var(--success)); box-shadow: 0 0 20px var(--primary); animation: loadBar 2.5s 1.8s cubic-bezier(0.65,0,0.35,1) forwards; }
+        @keyframes loadBar { to { width: 100%; } }
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        .splash-hint { position: absolute; bottom: 50px; left: 50%; transform: translateX(-50%); color: var(--muted); font-size: 0.85rem; animation: fadeIn 1s 2.5s backwards, blink 2.5s 2.5s infinite; }
+        @keyframes blink { 0%,100%{opacity:0.3} 50%{opacity:0.8} }
+        .splash-out { animation: fadeOut 0.8s forwards; }
+        @keyframes fadeOut { to{opacity:0;transform:scale(1.1);filter:blur(10px)} }
+        .autologin-status { position: absolute; bottom: 110px; left: 50%; transform: translateX(-50%); color: var(--success); font-size: 0.85rem; font-weight: 600; display: flex; align-items: center; gap: 8px; opacity: 0; transition: opacity 0.5s; z-index: 6; }
+        .autologin-status.show { opacity: 1; }
+        .autologin-status .mini-spinner { width: 14px; height: 14px; border: 2px solid rgba(0,255,136,0.3); border-top-color: var(--success); border-radius: 50%; animation: spin 0.8s linear infinite; }
+        @keyframes spin { to{transform:rotate(360deg)} }
+
+        #login-screen { position: fixed; inset: 0; z-index: 99998; background: radial-gradient(ellipse at center, #0a1530, #020409 70%); display: none; align-items: center; justify-content: center; padding: 20px; overflow: hidden; }
+        #login-screen.active { display: flex; }
+        .login-bg { position: absolute; inset: 0; background: radial-gradient(circle at 20% 30%, rgba(0,229,255,0.15), transparent 40%), radial-gradient(circle at 80% 70%, rgba(255,42,95,0.1), transparent 40%); }
+        .login-orbit { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); border: 2px solid transparent; border-top: 2px solid var(--primary); border-radius: 50%; animation: orbit 4s linear infinite; }
+        .login-orbit-1 { width: 500px; height: 500px; }
+        .login-orbit-2 { width: 620px; height: 620px; border-top-color: rgba(255,42,95,0.5); animation: orbit 6s linear infinite reverse; }
+        .login-orbit-3 { width: 740px; height: 740px; border-top-color: rgba(0,255,136,0.4); animation: orbit 8s linear infinite; }
+        .login-glow { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); width: 500px; height: 500px; background: radial-gradient(circle, rgba(0,229,255,0.2), transparent 60%); border-radius: 50%; animation: pulse 3s ease-in-out infinite; }
+        .login-content { position: relative; z-index: 10; text-align: center; animation: appear 0.6s ease-out; }
+        .login-brand { margin-bottom: 25px; }
+        .login-brand svg { width: 320px; max-width: 80vw; height: auto; filter: drop-shadow(0 0 20px rgba(0,229,255,0.6)); }
+        .login-brand .lb-main { font-family: 'Outfit', sans-serif; font-weight: 900; font-size: 70px; letter-spacing: 8px; fill: var(--primary); }
+        .login-brand .lb-sub { font-family: 'Outfit', sans-serif; font-weight: 300; font-size: 18px; letter-spacing: 12px; fill: var(--muted); }
+        .login-card { background: rgba(10,15,30,0.85); border: 1px solid rgba(0,229,255,0.15); border-radius: 24px; padding: 40px 32px; max-width: 440px; width: 100%; box-shadow: 0 30px 80px rgba(0,0,0,0.7), 0 0 50px rgba(0,229,255,0.1); }
+        .login-card h2 { font-size: 1.7rem; font-weight: 900; margin-bottom: 5px; background: linear-gradient(135deg, var(--primary), #00b8d4); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; color: transparent; }
+        .form-sub { color: var(--muted); font-size: 0.9rem; margin-bottom: 22px; }
+        .input-group { display: flex; align-items: center; background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.08); border-radius: 14px; margin-bottom: 12px; transition: border-color 0.3s, box-shadow 0.3s; }
+        .input-group:focus-within { border-color: var(--primary); box-shadow: 0 0 20px rgba(0,229,255,0.2); }
+        .input-group .input-icon { padding: 0 14px; color: var(--muted); }
+        .input-group input { flex: 1; padding: 14px 14px 14px 0; background: transparent; border: none; outline: none; color: white; font-family: inherit; font-size: 1rem; margin: 0; }
+        .input-group input::placeholder { color: var(--muted); }
+        .toggle-pass { padding: 0 14px; background: transparent; border: none; color: var(--muted); cursor: pointer; font-size: 1rem; }
+        .toggle-pass:hover { color: var(--primary); }
+        .remember-row { display: flex; align-items: center; justify-content: space-between; margin: 6px 0 4px; padding: 0 4px; font-size: 0.8rem; }
+        .remember-check { display: flex; align-items: center; gap: 8px; color: var(--muted); cursor: pointer; user-select: none; }
+        .remember-check input { display: none; }
+        .remember-check .checkmark { width: 18px; height: 18px; border: 2px solid rgba(255,255,255,0.2); border-radius: 5px; display: flex; align-items: center; justify-content: center; transition: 0.2s; flex-shrink: 0; background: rgba(0,0,0,0.3); }
+        .remember-check input:checked + .checkmark { background: var(--primary); border-color: var(--primary); }
+        .remember-check input:checked + .checkmark::after { content: '✓'; color: #000; font-weight: 900; font-size: 0.8rem; }
+        .remember-check:hover { color: white; }
+        .forgot-link { color: var(--muted); font-size: 0.75rem; cursor: pointer; text-decoration: underline; }
+        .forgot-link:hover { color: var(--danger); }
+        .login-btn { width: 100%; padding: 14px; background: linear-gradient(135deg, var(--primary), #00b8d4); border: none; border-radius: 14px; color: #000; font-weight: 800; font-size: 1rem; cursor: pointer; margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 8px; transition: transform 0.2s, box-shadow 0.3s; }
+        .login-btn:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(0,229,255,0.4); }
+        .login-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+        .btn-spinner { width: 16px; height: 16px; border: 2.5px solid rgba(0,0,0,0.3); border-top-color: #000; border-radius: 50%; animation: spin 0.7s linear infinite; }
+        .login-error { background: rgba(255,42,95,0.12); border: 1px solid var(--danger); color: var(--danger); padding: 10px 14px; border-radius: 12px; margin-top: 12px; text-align: center; font-size: 0.85rem; display: none; animation: shake 0.3s; }
+        .login-error.show { display: block; }
+        @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-4px)} 75%{transform:translateX(4px)} }
+        .login-toggle { text-align: center; margin-top: 18px; color: var(--muted); font-size: 0.9rem; }
+        .login-toggle a { color: var(--primary); cursor: pointer; font-weight: 700; margin-left: 6px; }
+        .login-toggle a:hover { text-shadow: 0 0 8px var(--primary); }
+        .login-footer { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 16px; color: var(--muted); font-size: 0.75rem; }
+        .dot-live { width: 7px; height: 7px; border-radius: 50%; background: var(--success); box-shadow: 0 0 8px var(--success); animation: pulse 1.5s infinite; }
+        .login-passes-info { text-align: center; font-size: 0.75rem; color: var(--muted); margin-top: 10px; }
+        .login-last-user { background: rgba(0,229,255,0.08); border: 1px solid rgba(0,229,255,0.25); border-radius: 10px; padding: 8px 12px; margin-bottom: 12px; font-size: 0.82rem; color: var(--muted); display: flex; align-items: center; gap: 8px; }
+        .login-last-user strong { color: var(--primary); }
+        .login-last-user a { margin-left: auto; color: var(--danger); cursor: pointer; font-size: 0.78rem; }
+        .session-saved-info { background: rgba(0,255,136,0.08); border: 1px solid rgba(0,255,136,0.2); border-radius: 8px; padding: 6px 10px; margin-top: 10px; font-size: 0.7rem; color: var(--success); text-align: center; }
+
+        /* ===== TELA MANUTENÇÃO ===== */
+        #manutencao-overlay { position: fixed; inset: 0; z-index: 999999; background: radial-gradient(ellipse at center, #1a1530, #020409 70%); display: none; align-items: center; justify-content: center; padding: 20px; }
+        #manutencao-overlay.active { display: flex; }
+        .manutencao-box { text-align: center; max-width: 600px; width: 100%; background: rgba(15,20,35,0.95); border: 2px solid #ffb800; border-radius: 24px; padding: 50px 35px; box-shadow: 0 30px 80px rgba(255,184,0,0.3), 0 0 60px rgba(255,184,0,0.2); animation: manutencaoAppear 0.5s ease-out; }
+        @keyframes manutencaoAppear { from { opacity: 0; transform: scale(0.85); } to { opacity: 1; transform: scale(1); } }
+        .manutencao-icon { font-size: 5rem; margin-bottom: 16px; animation: rotateIcon 4s linear infinite; display: inline-block; }
+        @keyframes rotateIcon { to { transform: rotate(360deg); } }
+        .manutencao-box h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 900; color: #ffb800; margin-bottom: 14px; text-shadow: 0 0 30px rgba(255,184,0,0.5); }
+        .manutencao-box .previsao { display: inline-block; background: rgba(255,184,0,0.15); border: 1px solid #ffb800; color: #ffb800; padding: 8px 20px; border-radius: 50px; font-weight: 700; font-size: 1.05rem; margin: 14px 0; }
+        .manutencao-box .msg-manutencao { color: #fff; font-size: 1.1rem; line-height: 1.6; margin: 18px 0; }
+        .manutencao-box .dots { display: flex; gap: 8px; justify-content: center; margin: 24px 0; }
+        .manutencao-box .dot-m { width: 12px; height: 12px; border-radius: 50%; background: #ffb800; animation: bounceDot 1.4s infinite ease-in-out; }
+        .manutencao-box .dot-m:nth-child(1) { animation-delay: -0.32s; }
+        .manutencao-box .dot-m:nth-child(2) { animation-delay: -0.16s; }
+        @keyframes bounceDot { 0%, 80%, 100% { transform: scale(0.6); opacity: 0.5; } 40% { transform: scale(1.2); opacity: 1; } }
+        .manutencao-box .whatsapp-btn-m { display: inline-flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white; padding: 14px 28px; border-radius: 50px; font-weight: 700; text-decoration: none; margin-top: 18px; font-size: 0.95rem; transition: 0.2s; border: none; cursor: pointer; }
+        .manutencao-box .whatsapp-btn-m:hover { background: #1ea952; transform: translateY(-2px); }
+        .manutencao-logo { width: 200px; max-width: 60vw; height: auto; margin-bottom: 20px; filter: drop-shadow(0 0 20px rgba(255,184,0,0.5)); }
+
+        /* ===== BROADCAST POPUP ===== */
+        .broadcast-overlay { position: fixed; inset: 0; z-index: 99999; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center; padding: 20px; animation: fadeInOverlay 0.3s; }
+        .broadcast-overlay.active { display: flex; }
+        @keyframes fadeInOverlay { from { opacity: 0; } to { opacity: 1; } }
+        .broadcast-modal { background: linear-gradient(135deg, rgba(15,20,35,0.98), rgba(10,15,30,0.98)); border: 2px solid #00e5ff; border-radius: 24px; max-width: 550px; width: 100%; max-height: 90vh; overflow-y: auto; box-shadow: 0 30px 80px rgba(0,0,0,0.8), 0 0 60px rgba(0,229,255,0.4); animation: broadcastAppear 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); position: relative; }
+        @keyframes broadcastAppear { from { opacity: 0; transform: scale(0.5) translateY(-50px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        .broadcast-close { position: absolute; top: 14px; right: 14px; background: rgba(0,0,0,0.6); color: white; width: 36px; height: 36px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.2); cursor: pointer; font-size: 1.1rem; z-index: 2; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+        .broadcast-close:hover { background: #ff2a5f; transform: rotate(90deg); }
+        .broadcast-img-wrap { width: 100%; aspect-ratio: 16/9; background: #000; overflow: hidden; border-radius: 22px 22px 0 0; position: relative; }
+        .broadcast-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .broadcast-img-wrap .broadcast-badge { position: absolute; top: 12px; left: 12px; background: rgba(255,42,95,0.95); color: white; padding: 5px 12px; border-radius: 50px; font-size: 0.7rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; animation: pulse 2s infinite; }
+        .broadcast-content { padding: 24px 28px 28px; }
+        .broadcast-title { font-size: 1.5rem; font-weight: 900; color: white; margin-bottom: 12px; line-height: 1.2; }
+        .broadcast-msg { color: #d0d8e0; font-size: 1rem; line-height: 1.6; margin-bottom: 20px; white-space: pre-line; }
+        .broadcast-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .broadcast-btn { flex: 1; min-width: 140px; padding: 14px 20px; border-radius: 50px; font-weight: 800; font-size: 0.9rem; text-decoration: none; text-align: center; cursor: pointer; border: none; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 6px; }
+        .broadcast-btn-primary { background: linear-gradient(135deg, #00e5ff, #00b8d4); color: #000; }
+        .broadcast-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(0,229,255,0.4); }
+        .broadcast-btn-secondary { background: rgba(255,255,255,0.08); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .broadcast-btn-secondary:hover { background: rgba(255,255,255,0.15); }
+
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 5000; display: none; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal-content { background: rgba(15,20,35,0.98); border: 1px solid var(--border); border-radius: 20px; max-width: 500px; width: 100%; max-height: 90vh; overflow-y: auto; animation: appear 0.3s ease-out; }
+        .modal-header { padding: 18px 22px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); }
+        .modal-header h3 { font-size: 1.2rem; font-weight: 800; }
+        .modal-close { background: rgba(255,255,255,0.08); border: none; color: white; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.95rem; }
+        .modal-close:hover { background: var(--danger); }
+        .modal-body { padding: 22px; }
+        .modal-footer { padding: 16px 22px; border-top: 1px solid var(--border); display: flex; gap: 8px; justify-content: flex-end; }
+
+        .plan-info-card { background: linear-gradient(135deg, rgba(0,229,255,0.1), rgba(0,229,255,0.02)); border: 1px solid rgba(0,229,255,0.3); border-radius: 14px; padding: 18px; margin-bottom: 16px; }
+        .plan-info-card.expired { background: linear-gradient(135deg, rgba(255,42,95,0.15), rgba(255,42,95,0.02)); border-color: rgba(255,42,95,0.3); }
+        .plan-info-card.trial { background: linear-gradient(135deg, rgba(255,184,0,0.15), rgba(255,184,0,0.02)); border-color: rgba(255,184,0,0.3); }
+        .plan-info-card.admin { background: linear-gradient(135deg, rgba(0,255,136,0.15), rgba(0,255,136,0.02)); border-color: rgba(0,255,136,0.3); }
+        .plan-status-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .plan-status-label { color: var(--muted); font-size: 0.85rem; }
+        .plan-status-value { font-weight: 800; font-size: 0.95rem; }
+        .plan-big-number { font-size: 2.5rem; font-weight: 900; color: var(--primary); line-height: 1; margin: 8px 0; }
+        .plan-big-number.expired { color: var(--danger); }
+        .plan-big-number.trial { color: var(--warning); }
+        .plan-big-number.admin { color: var(--success); }
+        .plan-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.05); font-size: 0.9rem; }
+        .plan-row:last-child { border-bottom: none; }
+        .plan-row .label { color: var(--muted); }
+        .plan-row .value { font-weight: 600; }
+
+        .month-selector { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin: 12px 0; }
+        .month-btn { background: rgba(255,255,255,0.05); border: 2px solid var(--border); border-radius: 12px; padding: 12px 8px; cursor: pointer; transition: 0.2s; text-align: center; color: white; }
+        .month-btn:hover { border-color: var(--primary); }
+        .month-btn.selected { background: rgba(0,229,255,0.15); border-color: var(--primary); box-shadow: 0 0 15px rgba(0,229,255,0.3); }
+        .month-btn .qtd { font-size: 1.3rem; font-weight: 900; color: var(--primary); }
+        .month-btn .preco { font-size: 0.85rem; color: var(--muted); margin-top: 4px; }
+        .month-btn.selected .preco { color: white; }
+
+        .pix-qrcode { text-align: center; margin: 16px 0; padding: 16px; background: white; border-radius: 14px; }
+        .pix-qrcode img { max-width: 280px; margin: 0 auto; border-radius: 8px; }
+        .pix-code-box { display: flex; gap: 6px; margin-top: 12px; }
+        .pix-code-box input { flex: 1; padding: 10px; background: rgba(0,0,0,0.4); border: 1px solid var(--border); border-radius: 8px; color: white; font-family: monospace; font-size: 0.7rem; }
+        .pix-code-box button { background: var(--primary); color: #000; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 700; cursor: pointer; font-size: 0.85rem; white-space: nowrap; }
+        .payment-status { text-align: center; padding: 16px; background: rgba(0,229,255,0.08); border-radius: 12px; margin: 12px 0; }
+        .payment-status.pending { background: rgba(255,184,0,0.1); border: 1px solid var(--warning); }
+        .payment-status.paid { background: rgba(0,255,136,0.1); border: 1px solid var(--success); }
+        .payment-timer { font-size: 1.5rem; font-weight: 900; color: var(--warning); margin: 8px 0; }
+        .whatsapp-btn { display: flex; align-items: center; justify-content: center; gap: 8px; background: #25D366; color: white; border: none; padding: 12px; border-radius: 12px; font-weight: 800; width: 100%; cursor: pointer; text-decoration: none; transition: 0.2s; }
+        .whatsapp-btn:hover { background: #1ea952; transform: translateY(-2px); }
+        .manual-pix-info { background: rgba(255,184,0,0.1); border: 1px solid var(--warning); padding: 14px; border-radius: 12px; margin: 12px 0; font-size: 0.88rem; }
+        .manual-pix-key { font-family: monospace; background: rgba(0,0,0,0.3); padding: 8px; border-radius: 6px; word-break: break-all; font-size: 0.78rem; margin: 8px 0; }
+
+        #plan-gate { position: fixed; inset: 0; z-index: 8000; background: rgba(6,9,19,0.95); backdrop-filter: blur(10px); display: none; align-items: center; justify-content: center; padding: 20px; overflow-y: auto; }
+        #plan-gate.active { display: flex; }
+        .plan-gate-content { max-width: 500px; width: 100%; text-align: center; }
+        .plan-gate-icon { font-size: 4rem; margin-bottom: 16px; }
+        .plan-gate-content h2 { font-size: 1.8rem; font-weight: 900; margin-bottom: 8px; }
+        .plan-gate-content p { color: var(--muted); margin-bottom: 24px; }
+
+        .trial-banner { background: linear-gradient(90deg, var(--warning), #ff8c00); color: #000; text-align: center; padding: 10px 16px; font-weight: 700; font-size: 0.85rem; position: sticky; top: 78px; z-index: 998; margin: 8px 0 12px 0; border-radius: 10px; box-shadow: 0 4px 15px rgba(255, 184, 0, 0.3); display: flex; align-items: center; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .trial-banner button { background: rgba(0,0,0,0.3); color: white; border: none; padding: 4px 12px; border-radius: 50px; margin-left: 6px; cursor: pointer; font-weight: 700; font-family: inherit; font-size: 0.85rem; }
+        .trial-banner button:hover { background: rgba(0,0,0,0.5); }
+
+        .sidebar { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: rgba(10,15,30,0.9); border: 1px solid var(--border); border-radius: 100px; display: flex; padding: 6px 10px; z-index: 1000; box-shadow: 0 15px 30px rgba(0,0,0,0.5); gap: 3px; align-items: center; transition: transform 0.4s, opacity 0.3s; }
+        .sidebar.nav-hidden { transform: translateX(-50%) translateY(-200%); opacity: 0; }
+        .sidebar-brand { color: var(--primary); font-weight: 900; padding: 0 12px; }
+        .sidebar-user { color: var(--muted); font-size: 0.72rem; padding: 0 8px; display: flex; align-items: center; gap: 5px; }
+        .sync-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); box-shadow: 0 0 6px var(--success); animation: pulse 2s infinite; }
+        .sync-dot.dirty { background: var(--warning); box-shadow: 0 0 6px var(--warning); }
+        .plan-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--success); }
+        .plan-dot.trial { background: var(--warning); }
+        .plan-dot.expired { background: var(--danger); }
+        .plan-dot.admin { background: #00e5ff; box-shadow: 0 0 8px #00e5ff; }
+        .sidebar a { color: var(--muted); text-decoration: none; padding: 8px 16px; border-radius: 50px; font-weight: 600; display: flex; align-items: center; gap: 6px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+        .sidebar a:hover, .sidebar a.focused-tv { color: #fff; background: rgba(255,255,255,0.05); }
+        .sidebar a.active-link { color: #000; background: var(--primary); }
+        .sidebar-actions { margin-left: 8px; padding-left: 8px; border-left: 1px solid var(--border); display: flex; gap: 4px; }
+        .sidebar-icon { background: rgba(255,255,255,0.08); border: none; color: var(--text); padding: 8px 10px; border-radius: 50px; cursor: pointer; transition: 0.2s; font-size: 0.95rem; }
+        .sidebar-icon:hover, .sidebar-icon.focused-tv { background: var(--primary); color: #000; }
+        .main-content { padding: 90px 3% 40px; max-width: 100%; }
+
+        .hero-banner { width: 100%; height: 75vh; min-height: 450px; background-color: #000; background-size: cover; background-position: center; border-radius: 20px; position: relative; display: flex; align-items: flex-end; padding: 40px; box-shadow: 0 25px 50px rgba(0,0,0,0.8); overflow: hidden; margin-bottom: 35px; }
+        .hero-trailer { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+        .hero-trailer iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: 100vh; min-width: 177.77vh; min-height: 56.25vw; transform: translate(-50%,-50%) scale(1.2); border: none; pointer-events: none; opacity: 0; transition: opacity 0.8s; }
+        .hero-trailer iframe.loaded { opacity: 1; }
+        .hero-overlay { position: absolute; inset: 0; z-index: 1; background: linear-gradient(0deg, var(--bg) 0%, rgba(6,9,19,0.7) 30%, transparent 60%), linear-gradient(90deg, var(--bg) 0%, rgba(6,9,19,0.5) 40%, transparent 70%); }
+        .hero-content { position: relative; z-index: 2; max-width: 800px; }
+        .hero-content h1 { font-size: clamp(2.2rem, 5vw, 4.5rem); font-weight: 900; margin-bottom: 10px; line-height: 1.05; text-shadow: 0 5px 30px rgba(0,0,0,0.95); }
+        .hero-meta { margin-bottom: 10px; font-size: 1rem; font-weight: 600; display: flex; gap: 12px; flex-wrap: wrap; text-shadow: 0 2px 10px rgba(0,0,0,0.95); }
+        .hero-meta .star { color: var(--warning); }
+        .hero-desc { font-size: clamp(0.9rem, 1.2vw, 1.05rem); color: #f3f4f6; margin-bottom: 20px; line-height: 1.5; font-weight: 300; max-width: 600px; text-shadow: 0 2px 15px rgba(0,0,0,0.95); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+        .hero-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-hero { width: auto; padding: 12px 28px; border-radius: 100px; font-size: 1rem; display: inline-flex; align-items: center; gap: 8px; font-weight: 700; }
+        .btn-hero-outline { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.3); color: white; }
+        .btn-hero-outline:hover { background: rgba(255,255,255,0.25); box-shadow: none; }
+        .btn-hero-outline.favorited { background: var(--primary); color: #000; border-color: var(--primary); }
+        .hero-dots { position: absolute; bottom: 18px; right: 25px; z-index: 3; display: flex; gap: 5px; }
+        .hero-dot { width: 36px; height: 3px; background: rgba(255,255,255,0.25); cursor: pointer; transition: background 0.3s; border-radius: 2px; position: relative; overflow: hidden; }
+        .hero-dot:hover, .hero-dot.focused-tv { background: rgba(255,255,255,0.5); }
+        .hero-dot.active { background: rgba(255,255,255,0.4); }
+        .hero-dot.active::after { content:''; position:absolute; inset:0; background: var(--primary); animation: progress 25s linear forwards; }
+        @keyframes progress { from{width:0} to{width:100%} }
+
+        .section { margin-bottom: 40px; }
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; }
+        .section-header h3 { font-size: clamp(1.2rem, 2vw, 1.6rem); font-weight: 800; }
+        .view-all { color: var(--muted); cursor: pointer; font-weight: 600; font-size: 0.85rem; background: rgba(255,255,255,0.05); padding: 6px 16px; border-radius: 50px; transition: 0.2s; border: none; font-family: inherit; }
+        .view-all:hover, .view-all.focused-tv { background: var(--primary); color: #000; }
+        .carousel-container { position: relative; margin: 0 -3%; padding: 0 3%; }
+        .carousel-track { display: flex; gap: 12px; overflow-x: auto; scroll-behavior: smooth; padding: 8px 0 16px; scroll-snap-type: x mandatory; scrollbar-width: none; }
+        .carousel-track::-webkit-scrollbar { display: none; }
+        .card-wrap { flex: 0 0 auto; width: clamp(180px, 16vw, 240px); aspect-ratio: 2/3; scroll-snap-align: start; cursor: pointer; position: relative; border-radius: 12px; overflow: hidden; transition: transform 0.35s cubic-bezier(0.25,1,0.5,1), box-shadow 0.35s; background: linear-gradient(135deg, #1a1f2e, #0a0e18); will-change: transform; contain: layout style; }
+        .card-wrap:hover, .card-wrap.focused-tv { transform: translateY(-6px) scale(1.03); box-shadow: 0 20px 40px rgba(0,0,0,0.6), 0 0 25px rgba(0,229,255,0.3); z-index: 5; }
+        .card-wrap img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s ease, transform 0.5s; }
+        .card-wrap img.loaded { opacity: 1; }
+        .card-wrap:hover img { transform: scale(1.08); filter: brightness(0.4); }
+        .card-wrap .card-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px; z-index: 3; background: linear-gradient(0deg, rgba(0,0,0,0.95), transparent); opacity: 0; transform: translateY(15px); transition: opacity 0.3s, transform 0.3s; pointer-events: none; }
+        .card-wrap:hover .card-info, .card-wrap.focused-tv .card-info { opacity: 1; transform: translateY(0); }
+        .card-info h4 { font-size: 0.85rem; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .card-info p { font-size: 0.7rem; color: var(--muted); margin-top: 2px; }
+        .card-badge { position: absolute; top: 6px; left: 6px; z-index: 3; background: rgba(0,0,0,0.85); color: white; padding: 2px 7px; border-radius: 50px; font-size: 0.65rem; font-weight: 800; }
+        .card-badge.hd { background: rgba(255,255,255,0.2); }
+        .card-badge.top { background: var(--success); color: #000; }
+        .card-badge.live { background: var(--danger); display: flex; align-items: center; gap: 3px; }
+        .card-badge.live::before { content:''; width: 4px; height: 4px; background: white; border-radius: 50%; animation: pulse 1.5s infinite; }
+        .card-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--primary); z-index: 4; box-shadow: 0 0 6px var(--primary); }
+        .card-watched { position: absolute; top: 6px; right: 6px; z-index: 3; background: var(--success); color: #000; padding: 2px 7px; border-radius: 50px; font-size: 0.6rem; font-weight: 800; }
+        .carousel-arrow { position: absolute; top: 50%; transform: translateY(-50%); width: 50px; height: 50px; border-radius: 50%; background: rgba(0,0,0,0.7); color: white; border: 1px solid rgba(255,255,255,0.3); display: flex; align-items: center; justify-content: center; cursor: pointer; z-index: 10; transition: 0.2s; font-size: 1.3rem; opacity: 0; }
+        .carousel-container:hover .carousel-arrow, .carousel-arrow.focused-tv { opacity: 1; }
+        .carousel-arrow:hover, .carousel-arrow:focus { background: var(--primary); color: #000; border-color: var(--primary); transform: translateY(-50%) scale(1.08); }
+        .carousel-arrow.left { left: 8px; }
+        .carousel-arrow.right { right: 8px; }
+        .cover-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; padding: 16px 0; }
+        .cover-grid .card-wrap { width: 100%; flex: none; }
+        .continue-row { display: flex; gap: 12px; overflow-x: auto; padding: 8px 0 16px; scrollbar-width: none; scroll-snap-type: x mandatory; }
+        .continue-row::-webkit-scrollbar { display: none; }
+        .continue-card { flex: 0 0 auto; width: clamp(260px, 26vw, 360px); aspect-ratio: 16/9; border-radius: 12px; overflow: hidden; position: relative; cursor: pointer; transition: 0.25s; scroll-snap-align: start; background: #111; will-change: transform; }
+        .continue-card:hover, .continue-card.focused-tv { transform: translateY(-4px); box-shadow: 0 12px 25px rgba(0,0,0,0.6); }
+        .continue-card img { width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity 0.5s; }
+        .continue-card img.loaded { opacity: 1; }
+        .continue-card .continue-play { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: rgba(0,0,0,0.3); transition: 0.2s; }
+        .continue-card:hover .continue-play { background: rgba(0,0,0,0.5); }
+        .continue-play-btn { width: 50px; height: 50px; border-radius: 50%; background: var(--primary); color: #000; display: flex; align-items: center; justify-content: center; font-size: 1.3rem; border: none; cursor: pointer; box-shadow: 0 4px 15px rgba(0,229,255,0.5); }
+        .continue-info { position: absolute; bottom: 0; left: 0; right: 0; padding: 12px; background: linear-gradient(0deg, rgba(0,0,0,0.95), transparent); }
+        .continue-info h4 { font-size: 0.9rem; font-weight: 700; margin-bottom: 2px; }
+        .continue-info p { font-size: 0.75rem; color: var(--muted); }
+        .continue-progress { position: absolute; bottom: 0; left: 0; height: 3px; background: var(--primary); }
+        .skeleton { background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.06) 50%, rgba(255,255,255,0.03) 75%); background-size: 200% 100%; animation: shimmer 1.5s infinite; border-radius: 8px; }
+        @keyframes shimmer { 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+        #details-view { position: fixed; inset: 0; z-index: 150; background: var(--bg); overflow-y: auto; display: none; }
+        .details-hero { position: fixed; inset: 0; z-index: 1; background-color: #000; background-size: cover; background-position: center; }
+        .details-hero::before { content:''; position:absolute; inset:0; z-index:1; background: rgba(6,9,19,0.4); }
+        .details-hero::after { content:''; position:absolute; inset:0; z-index:2; background: linear-gradient(to right, var(--bg) 0%, var(--bg) 20%, rgba(6,9,19,0.7) 45%, rgba(6,9,19,0.2) 70%, transparent 100%), linear-gradient(to top, var(--bg) 0%, rgba(6,9,19,0.4) 20%, transparent 40%); }
+        #trailer-container { position: absolute; inset: 0; z-index: 0; background: #000; overflow: hidden; }
+        #trailer-container iframe { position: absolute; top: 50%; left: 50%; width: 100vw; height: 100vh; min-width: 177.77vh; min-height: 56.25vw; transform: translate(-50%,-50%) scale(1.1); border: none; pointer-events: none; opacity: 0; transition: opacity 0.8s; }
+        #trailer-container iframe.loaded { opacity: 1; }
+        .btn-back { position: fixed; top: 18px; left: 18px; z-index: 200; background: rgba(0,0,0,0.7); color: white; border: 1px solid rgba(255,255,255,0.2); padding: 7px 14px; border-radius: 50px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px; font-family: inherit; font-size: 0.82rem; transition: 0.2s; }
+        .btn-back:hover, .btn-back.focused-tv { background: var(--primary); color: #000; border-color: var(--primary); }
+        .details-info { position: relative; z-index: 3; margin-top: 8vh; padding: 0 0 80px 4vw; width: 60%; max-width: 800px; }
+        .details-info h1 { font-size: clamp(2.2rem, 4.5vw, 4rem); font-weight: 900; margin-bottom: 16px; line-height: 1.05; text-shadow: 0 5px 30px rgba(0,0,0,0.95); }
+        .details-desc { color: white; font-size: 1rem; line-height: 1.55; margin-bottom: 20px; padding: 16px; background: rgba(6,9,19,0.6); border-radius: 12px; border-left: 3px solid var(--primary); }
+        .details-meta { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 22px; }
+        .meta-item { background: rgba(0,0,0,0.5); padding: 8px 12px; border-radius: 10px; border: 1px solid var(--border); }
+        .meta-item .label { font-size: 0.65rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; }
+        .meta-item .value { font-size: 0.9rem; font-weight: 700; color: var(--primary); margin-top: 2px; }
+        .details-actions { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; }
+        .details-actions button { width: auto; padding: 12px 32px; border-radius: 100px; font-size: 1rem; }
+        .episode-btn { background: rgba(255,255,255,0.05); padding: 14px 18px; border-radius: 12px; cursor: pointer; margin-bottom: 8px; display: flex; justify-content: space-between; border: 1px solid var(--border); align-items: center; gap: 12px; transition: 0.2s; }
+        .episode-btn:hover, .episode-btn.focused-tv { background: rgba(0,229,255,0.1); transform: translateX(6px); border-color: var(--primary); }
+        .episode-btn .ep-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        #player-container { display: none; position: fixed; inset: 0; background: #000; z-index: 9000; }
+        .video-wrapper { width: 100%; height: 100%; position: relative; }
+        .plyr { width: 100%; height: 100%; }
+        .plyr__video-wrapper { background: #000; }
+        .plyr__controls { opacity: 0; transition: opacity 0.3s !important; }
+        .plyr--video:hover .plyr__controls, .plyr--video.paused .plyr__controls, .plyr__controls.visible { opacity: 1 !important; }
+        .btn-player-back { position: absolute; top: 18px; left: 18px; z-index: 10000; padding: 7px 14px; background: rgba(0,0,0,0.7); color: white; border: 1px solid rgba(255,255,255,0.3); border-radius: 50px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 5px; font-family: inherit; font-size: 0.82rem; opacity: 0; transition: opacity 0.3s; }
+        .btn-player-back.show { opacity: 1; }
+        .btn-player-back:hover, .btn-player-back.focused-tv { background: var(--primary); color: #000; border-color: var(--primary); }
+        .skip-intro { position: absolute; bottom: 90px; left: 50%; transform: translateX(-50%); z-index: 10002; background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 10px 22px; border-radius: 50px; cursor: pointer; font-weight: 700; font-size: 0.9rem; font-family: inherit; display: none; transition: 0.2s; }
+        .skip-intro.show { display: block; }
+        .skip-intro:hover { background: rgba(255,255,255,0.25); }
+        .autoplay-next { position: absolute; bottom: 80px; right: 18px; z-index: 10001; background: rgba(15,20,35,0.95); border: 1px solid var(--border); border-radius: 14px; padding: 16px; max-width: 320px; display: none; }
+        .autoplay-next.show { display: block; }
+        .autoplay-next h4 { font-size: 0.9rem; margin-bottom: 10px; }
+        .autoplay-actions { display: flex; gap: 6px; }
+        .autoplay-actions button { padding: 7px; font-size: 0.8rem; border-radius: 50px; flex: 1; }
+        .btn-secondary { background: rgba(255,255,255,0.1); border: 1px solid var(--border); color: white; font-family: inherit; }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        #search-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); z-index: 2000; display: none; align-items: flex-start; justify-content: center; padding-top: 12vh; }
+        #search-modal.active { display: flex; }
+        .search-box { background: rgba(15,20,35,0.95); border: 1px solid var(--border); border-radius: 20px; padding: 18px; width: 90%; max-width: 700px; }
+        .search-box input { width: 100%; padding: 12px 18px; background: rgba(0,0,0,0.5); border: 2px solid var(--border); border-radius: 12px; color: white; font-size: 1rem; font-family: inherit; }
+        .search-box input:focus { border-color: var(--primary); outline: none; }
+        .search-results { margin-top: 12px; max-height: 50vh; overflow-y: auto; scrollbar-width: thin; }
+        .search-item { display: flex; gap: 10px; padding: 8px; border-radius: 10px; cursor: pointer; transition: 0.2s; border: 1px solid transparent; }
+        .search-item:hover, .search-item.focused-tv { background: rgba(0,229,255,0.08); border-color: var(--primary); }
+        .search-item img { width: 45px; height: 60px; border-radius: 6px; object-fit: cover; background: #111; }
+        .search-item .si-text { flex: 1; min-width: 0; }
+        .search-item h4 { font-size: 0.9rem; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .search-item p { color: var(--muted); font-size: 0.75rem; margin-top: 2px; }
+        #toast-container { position: fixed; top: 90px; right: 25px; z-index: 9999; display: flex; flex-direction: column; gap: 8px; pointer-events: none; }
+        .toast { background: rgba(10,15,30,0.95); color: white; padding: 12px 20px; border-radius: 12px; border-left: 4px solid var(--primary); font-weight: 600; font-size: 0.85rem; opacity: 0; transform: translateX(300px); transition: 0.35s; pointer-events: auto; max-width: 320px; }
+        .toast.show { opacity: 1; transform: translateX(0); }
+        .toast.error { border-left-color: var(--danger); }
+        .toast.success { border-left-color: var(--success); }
+        .live-container { background: rgba(255,255,255,0.02); padding: 25px; border-radius: 20px; border: 1px solid var(--border); }
+        .live-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 12px; }
+        .live-header h2 { font-size: 1.6rem; font-weight: 900; display: flex; align-items: center; gap: 10px; }
+        .live-badge { background: var(--danger); color: white; padding: 3px 9px; border-radius: 50px; font-size: 0.6em; animation: pulse 2s infinite; }
+        .live-filters { display: flex; gap: 6px; margin-bottom: 18px; overflow-x: auto; padding-bottom: 8px; scrollbar-width: none; }
+        .live-filters::-webkit-scrollbar { display: none; }
+        .live-filter { padding: 6px 16px; background: rgba(255,255,255,0.05); border: 1px solid var(--border); border-radius: 50px; color: var(--muted); font-weight: 600; cursor: pointer; transition: 0.2s; white-space: nowrap; font-family: inherit; font-size: 0.85rem; }
+        .live-filter:hover, .live-filter.focused-tv { background: rgba(255,255,255,0.1); color: white; }
+        .live-filter.active { background: var(--primary); color: #000; border-color: var(--primary); }
+        .live-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px; }
+        .live-card { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; cursor: pointer; transition: 0.2s; }
+        .live-card:hover, .live-card.focused-tv { transform: translateY(-3px); border-color: var(--primary); }
+        .live-card-header { padding: 14px; display: flex; align-items: center; gap: 10px; border-bottom: 1px solid var(--border); }
+        .live-logo { width: 60px; height: 44px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 3px; }
+        .live-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .live-logo-placeholder { font-weight: 900; color: #000; font-size: 1.1rem; }
+        .live-info { flex: 1; min-width: 0; }
+        .live-info h3 { font-size: 0.95rem; font-weight: 800; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .live-info p { font-size: 0.7rem; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-top: 2px; }
+        .live-play { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: #000; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; font-size: 1rem; margin-left: auto; flex-shrink: 0; }
+        .live-programming { padding: 12px 14px; }
+        .now-playing { display: flex; align-items: center; gap: 6px; margin-bottom: 5px; font-size: 0.72rem; }
+        .now-playing-badge { background: var(--danger); color: white; padding: 2px 7px; border-radius: 50px; font-weight: 800; display: flex; align-items: center; gap: 3px; }
+        .now-playing-badge::before { content:''; width: 3px; height: 3px; background: white; border-radius: 50%; animation: pulse 1.5s infinite; }
+        .now-playing-text { color: white; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; flex: 1; min-width: 0; }
+        .live-progress { height: 3px; background: rgba(255,255,255,0.1); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+        .live-progress-fill { height: 100%; background: var(--primary); }
+        #channel-modal { position: fixed; inset: 0; z-index: 3000; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; padding: 18px; }
+        #channel-modal.active { display: flex; }
+        .channel-content { background: rgba(15,20,35,0.98); border: 1px solid var(--border); border-radius: 20px; max-width: 900px; width: 100%; max-height: 90vh; overflow-y: auto; }
+        .channel-header { padding: 18px; display: flex; align-items: center; gap: 12px; border-bottom: 1px solid var(--border); }
+        .channel-header-logo { width: 60px; height: 44px; background: white; border-radius: 8px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; padding: 3px; }
+        .channel-header-logo img { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .channel-header h2 { font-size: 1.2rem; font-weight: 800; }
+        .channel-header p { color: var(--muted); font-size: 0.78rem; margin-top: 2px; }
+        .channel-close { width: 32px; height: 32px; border-radius: 50%; background: rgba(255,255,255,0.08); color: white; border: none; cursor: pointer; font-size: 0.95rem; margin-left: auto; flex-shrink: 0; }
+        .channel-close:hover { background: var(--danger); }
+        .channel-body { padding: 18px; }
+        .channel-player { background: #000; border-radius: 14px; aspect-ratio: 16/9; margin-bottom: 12px; display: flex; align-items: center; justify-content: center; }
+        .channel-player video { width: 100%; height: 100%; }
+        .channel-actions { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+        .channel-actions button { width: auto; padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; }
+        .schedule-item { display: flex; gap: 12px; padding: 8px 12px; background: rgba(255,255,255,0.03); border-radius: 8px; margin-bottom: 5px; }
+        .schedule-item.current { background: rgba(0,229,255,0.12); border: 1px solid var(--primary); }
+        .schedule-time { font-weight: 800; color: var(--primary); min-width: 55px; font-size: 0.85rem; }
+        .schedule-info { flex: 1; min-width: 0; }
+        .schedule-info .title { font-weight: 600; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .schedule-info .dur { color: var(--muted); font-size: 0.72rem; }
+        .pagination { display: flex; justify-content: center; gap: 6px; margin-top: 25px; flex-wrap: wrap; align-items: center; }
+        .pagination button { width: auto; padding: 8px 14px; border-radius: 50px; font-size: 0.85rem; }
+        .pagination .pg-info { color: var(--muted); padding: 0 10px; font-size: 0.85rem; }
+        .pagination .pg-info strong { color: white; }
+
+        @media (max-width: 900px) {
+            .splash-orbit, .splash-glow, .login-orbit, .login-glow { display: none; }
+            .sidebar { top: auto; bottom: 12px; width: 95%; padding: 5px; }
+            .sidebar a { padding: 6px 8px; font-size: 0.6rem; flex-direction: column; gap: 1px; }
+            .sidebar a span { font-size: 1.1rem; }
+            .sidebar-brand, .sidebar-user { display: none; }
+            .sidebar-actions { border: none; padding: 0; margin: 0; }
+            .main-content { padding: 25px 12px 90px; }
+            .hero-banner { height: 60vh; min-height: 320px; padding: 25px; border-radius: 16px; }
+            .card-wrap { width: clamp(130px, 28vw, 170px); }
+            .carousel-arrow { width: 40px; height: 40px; font-size: 1.1rem; opacity: 0.85; }
+            .details-info { width: 100%; padding: 0 16px 50px; }
+            .live-grid { grid-template-columns: 1fr; }
+            .login-card { padding: 30px 22px; }
+            .login-brand svg { width: 240px; }
+            .month-selector { grid-template-columns: repeat(2, 1fr); }
+            .cover-grid { grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; }
+            .trial-banner { top: 12px; padding: 8px 12px; font-size: 0.78rem; }
+            .manutencao-box { padding: 35px 22px; }
+            .broadcast-content { padding: 20px; }
+            .broadcast-title { font-size: 1.25rem; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; }
+        }
+    </style>
+</head>
+<body>
+    <div id="toast-container"></div>
+    
+    <div id="splash">
+        <div class="splash-bg"></div>
+        <div class="splash-orbit splash-orbit-3"></div>
+        <div class="splash-orbit splash-orbit-2"></div>
+        <div class="splash-orbit splash-orbit-1"></div>
+        <div class="splash-glow"></div>
+        <div class="splash-content">
+            <svg class="splash-logo" viewBox="0 0 800 220" aria-label="Rabelo TV">
+                <text class="r-main" x="50%" y="55%" text-anchor="middle" dominant-baseline="middle">RABELO</text>
+                <text class="r-sub" x="50%" y="85%" text-anchor="middle" dominant-baseline="middle">T V</text>
+            </svg>
+            <div class="splash-tag">PREMIUM STREAMIT</div>
+            <div class="splash-loader"><div class="splash-loader-bar"></div></div>
+            <div class="autologin-status" id="autologin-status">
+                <div class="mini-spinner"></div>
+                <span>Reconectando...</span>
+            </div>
+        </div>
+        <div class="splash-hint" id="splash-hint">✨ Toque para começar ✨</div>
+    </div>
+    
+    <div id="manutencao-overlay">
+        <div class="manutencao-box">
+            <svg class="manutencao-logo" viewBox="0 0 500 140" aria-label="Rabelo">
+                <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" style="font-family:'Outfit',sans-serif;font-weight:900;font-size:60px;letter-spacing:6px;fill:#ffb800;">RABELO</text>
+                <text x="50%" y="85%" text-anchor="middle" dominant-baseline="middle" style="font-family:'Outfit',sans-serif;font-weight:300;font-size:15px;letter-spacing:10px;fill:#aaa;">PREMIUM TV</text>
+            </svg>
+            <div class="manutencao-icon">🔧</div>
+            <h1>Em Manutenção</h1>
+            <div class="previsao" id="manutencao-previsao">⏰ Voltaremos em breve</div>
+            <p class="msg-manutencao" id="manutencao-mensagem">Estamos trabalhando para melhorar sua experiência.</p>
+            <div class="dots"><div class="dot-m"></div><div class="dot-m"></div><div class="dot-m"></div></div>
+            <a id="manutencao-whatsapp" class="whatsapp-btn-m" href="#" target="_blank">💬 Falar com Suporte</a>
+        </div>
+    </div>
+
+    <div id="broadcast-overlay" class="broadcast-overlay">
+        <div class="broadcast-modal" id="broadcast-modal">
+            <button class="broadcast-close" onclick="fecharBroadcast()" aria-label="Fechar">✕</button>
+            <div id="broadcast-img-wrap" class="broadcast-img-wrap" style="display:none;">
+                <img id="broadcast-img" src="" alt="">
+                <div class="broadcast-badge">📢 AVISO</div>
+            </div>
+            <div class="broadcast-content">
+                <h2 class="broadcast-title" id="broadcast-title">Aviso</h2>
+                <p class="broadcast-msg" id="broadcast-msg"></p>
+                <div class="broadcast-actions">
+                    <a id="broadcast-link-btn" class="broadcast-btn broadcast-btn-primary" href="#" target="_blank" style="display:none;">🔗 Saiba Mais</a>
+                    <button class="broadcast-btn broadcast-btn-secondary" onclick="fecharBroadcast()">Fechar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="login-screen">
+        <div class="login-bg"></div>
+        <div class="login-orbit login-orbit-3"></div>
+        <div class="login-orbit login-orbit-2"></div>
+        <div class="login-orbit login-orbit-1"></div>
+        <div class="login-glow"></div>
+        <div class="login-content">
+            <div class="login-brand">
+                <svg viewBox="0 0 500 140" aria-label="Rabelo">
+                    <text class="lb-main" x="50%" y="55%" text-anchor="middle" dominant-baseline="middle">RABELO</text>
+                    <text class="lb-sub" x="50%" y="88%" text-anchor="middle" dominant-baseline="middle">PREMIUM TV</text>
+                </svg>
+            </div>
+            <div class="login-card">
+                <h2 id="form-title">Entrar</h2>
+                <p class="form-sub" id="form-subtitle">Acesse sua conta na nuvem</p>
+                <div id="last-user-box" class="login-last-user" style="display:none;"><span>👤 Último: <strong id="last-user-name"></strong></span><a onclick="limparUltimoUser()">Outro</a></div>
+                <form onsubmit="event.preventDefault(); submeterAuth();" autocomplete="on">
+                    <div class="input-group"><span class="input-icon">👤</span><input id="login-user" placeholder="Usuário" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" required></div>
+                    <div class="input-group" id="email-group" style="display:none;"><span class="input-icon">📧</span><input id="login-email" type="email" placeholder="Seu e-mail" autocomplete="email"></div>
+                    <div class="input-group"><span class="input-icon">🔒</span><input id="login-pass" type="password" placeholder="Senha" autocomplete="current-password" required><button type="button" class="toggle-pass" onclick="toggleVisibilidade('login-pass', this)">👁</button></div>
+                    <div class="input-group" id="pass2-group" style="display:none;"><span class="input-icon">🔒</span><input id="login-pass2" type="password" placeholder="Confirmar senha" autocomplete="new-password"><button type="button" class="toggle-pass" onclick="toggleVisibilidade('login-pass2', this)">👁</button></div>
+                    <div class="remember-row" id="remember-row"><label class="remember-check"><input type="checkbox" id="remember-me" checked><span class="checkmark"></span><span>Manter conectado</span></label><a class="forgot-link" onclick="abrirRecuperacaoSenha()">Esqueci a senha</a></div>
+                    <button id="login-btn" class="login-btn" type="submit"><span id="btn-text">Entrar</span></button>
+                </form>
+                <div id="session-info" class="session-saved-info" style="display:none;">🔒 Sessão será salva</div>
+                <div id="login-error" class="login-error"></div>
+                <div class="login-toggle"><span id="toggle-msg">Não tem conta?</span><a id="toggle-link" onclick="alternarAuth()">Criar conta</a></div>
+                <div class="login-passes-info">ⓘ Mínimo 3 caracteres no usuário e 4 na senha</div>
+                <div class="login-footer"><span class="dot-live"></span><span>Seus dados sincronizam automaticamente na nuvem</span></div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="recover-modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>🔑 Recuperar Senha</h3><button class="modal-close" onclick="fecharRecuperacaoSenha()">✕</button></div>
+            <div class="modal-body" id="recover-step1">
+                <p style="color:var(--muted); margin-bottom:16px; font-size:0.9rem;">Informe o e-mail cadastrado.</p>
+                <div class="input-group"><span class="input-icon">📧</span><input id="recover-email" type="email" placeholder="seu@email.com" required></div>
+                <div id="recover-error" class="login-error"></div>
+                <div id="recover-code-display" style="display:none; background:rgba(0,229,255,0.1); padding:14px; border-radius:10px; margin:12px 0; text-align:center; font-size:0.9rem;">
+                    <p style="color:var(--muted); font-size:0.8rem; margin-bottom:8px;">📩 Se não recebeu o e-mail, use o código abaixo:</p>
+                    <div style="font-size:1.8rem; font-weight:900; color:var(--primary); letter-spacing:8px;" id="recover-code-value">------</div>
+                </div>
+            </div>
+            <div class="modal-body" id="recover-step2" style="display:none;">
+                <p style="color:var(--muted); margin-bottom:16px; font-size:0.9rem;">Digite o código recebido e crie uma nova senha.</p>
+                <div class="input-group"><span class="input-icon">🔢</span><input id="recover-codigo" placeholder="Código de 6 dígitos" maxlength="6" style="letter-spacing:4px; text-align:center; font-weight:700;"></div>
+                <div class="input-group"><span class="input-icon">🔒</span><input id="recover-novasenha" type="password" placeholder="Nova senha (mín 4 caracteres)"></div>
+                <div id="recover-error2" class="login-error"></div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn-secondary" onclick="fecharRecuperacaoSenha()">Cancelar</button>
+                <button id="recover-btn1" class="login-btn" style="width:auto; padding:10px 20px;" onclick="solicitarCodigoRecuperacao()">Enviar Código</button>
+                <button id="recover-btn2" class="login-btn" style="width:auto; padding:10px 20px; display:none;" onclick="confirmarRecuperacao()">Redefinir Senha</button>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="account-modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>👤 Minha Conta</h3><button class="modal-close" onclick="fecharContaModal()">✕</button></div>
+            <div class="modal-body" id="account-body"><div style="text-align:center;padding:20px;"><div class="btn-spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#00e5ff;width:32px;height:32px;margin:0 auto;"></div></div></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="diag-modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>🔧 Diagnóstico de Servidor</h3><button class="modal-close" onclick="fecharDiagModal()">✕</button></div>
+            <div class="modal-body" id="diag-body"><div style="text-align:center;padding:20px;"><div class="btn-spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#00e5ff;width:32px;height:32px;margin:0 auto;"></div><p style="color:var(--muted);margin-top:12px;">Testando...</p></div></div>
+            <div class="modal-footer"><button class="btn-secondary" onclick="recarregarServidoresManual()">🔄 Testar</button><button class="login-btn" style="width:auto; padding:10px 20px;" onclick="fecharDiagModal()">Fechar</button></div>
+        </div>
+    </div>
+    
+    <div class="modal-overlay" id="payment-modal">
+        <div class="modal-content">
+            <div class="modal-header"><h3>💎 Adicionar Meses</h3><button class="modal-close" onclick="fecharPaymentModal()">✕</button></div>
+            <div class="modal-body" id="payment-body">
+                <p style="color:var(--muted); font-size:0.9rem; margin-bottom:12px;">Escolha quantos meses:</p>
+                <div class="month-selector" id="month-selector"></div>
+                <div id="payment-qr-area" style="display:none;">
+                    <div class="payment-status pending" id="payment-status-box">
+                        <div style="font-size:0.9rem; margin-bottom:6px;">⏳ Aguardando pagamento...</div>
+                        <div class="payment-timer" id="payment-timer">59:59</div>
+                    </div>
+                    <p style="text-align:center; font-size:0.85rem; color:var(--muted); margin:12px 0 4px;">📱 Escaneie o QR Code:</p>
+                    <div class="pix-qrcode" id="pix-qrcode"></div>
+                    <p style="text-align:center; font-size:0.85rem; color:var(--muted); margin:12px 0 4px;">📋 Código Pix:</p>
+                    <div class="pix-code-box"><input id="pix-code" readonly><button onclick="copiarPix()">📋 Copiar</button></div>
+                    <button id="btn-ja-paguei" class="login-btn" style="margin-top:14px; background:linear-gradient(135deg,#00ff88,#00b894);color:#000;" onclick="marcarComoPago()">✅ Já Paguei</button>
+                </div>
+                <div id="payment-manual-area" style="display:none;">
+                    <div class="manual-pix-info">
+                        <strong>⚠️ Modo Manual</strong>
+                        <p style="margin:8px 0; font-size:0.85rem;">Faça o Pix e envie o comprovante:</p>
+                        <div style="font-size:1.4rem; font-weight:900; color:var(--primary);" id="manual-valor">R$ 1,00</div>
+                        <div class="manual-pix-key" id="manual-chave">chave</div>
+                    </div>
+                </div>
+                <button id="btn-gerar-pix" class="login-btn" style="margin-top:16px;" onclick="gerarPagamentoPix()">💎 Gerar Pix</button>
+            </div>
+            <div class="modal-footer"><a id="whatsapp-suporte" class="whatsapp-btn" href="#" target="_blank" style="flex:1;text-decoration:none;">💬 Suporte</a></div>
+        </div>
+    </div>
+    
+    <div id="plan-gate">
+        <div class="plan-gate-content">
+            <div class="plan-gate-icon">⏰</div>
+            <h2>Plano Expirado</h2>
+            <p>Seu período de teste acabou. Adicione meses para continuar.</p>
+            <button class="login-btn" onclick="abrirContaModal()">💎 Ver Plano / Pagar</button>
+            <a id="whatsapp-suporte-gate" class="whatsapp-btn" href="#" target="_blank" style="margin-top:12px;text-decoration:none;">💬 Suporte</a>
+        </div>
+    </div>
+    
+    <nav id="app-nav" class="sidebar" style="display:none;">
+        <div class="sidebar-brand">RABELO</div>
+        <div class="sidebar-user"><span class="plan-dot" id="plan-dot"></span><span id="user-display">user</span></div>
+        <a onclick="carregarMenu('home')" id="nav-home"><span>🏠</span> Início</a>
+        <a onclick="carregarMenu('live')" id="nav-live"><span>📺</span> Ao Vivo</a>
+        <a onclick="carregarMenu('vod')" id="nav-vod"><span>🎬</span> Filmes</a>
+        <a onclick="carregarMenu('series')" id="nav-series"><span>🍿</span> Séries</a>
+        <a onclick="carregarMenu('continue')" id="nav-continue"><span>⏳</span> Continuar</a>
+        <a onclick="carregarMenu('favorites')" id="nav-favorites"><span>⭐</span> Favoritos</a>
+        <div class="sidebar-actions">
+            <button class="sidebar-icon" onclick="abrirBusca()" title="Buscar">🔍</button>
+            <button class="sidebar-icon" onclick="abrirContaModal()" title="Conta">👤</button>
+            <button class="sidebar-icon" onclick="abrirSuporte()" title="Suporte">💬</button>
+            <button class="sidebar-icon" onclick="sairConta()" title="Sair">🚪</button>
+        </div>
+    </nav>
+    
+    <div id="search-modal">
+        <div class="search-box">
+            <input type="text" id="search-input" placeholder="Buscar...">
+            <div class="search-results" id="search-results"><p style="text-align:center;color:#888;padding:20px;font-size:0.9rem;">Digite para buscar</p></div>
+        </div>
+    </div>
+    
+    <div id="app-content" style="display:none;">
+        <div id="trial-banner" class="trial-banner" style="display:none;"><span id="trial-text">🎁 Período de teste</span><button onclick="abrirContaModal()">💎 Adicionar Meses</button><button onclick="this.parentElement.style.display='none'">✕</button></div>
+        <div id="home-view" class="main-content">
+            <div class="hero-banner" id="hero-banner">
+                <div class="hero-trailer" id="hero-trailer"><iframe id="hero-iframe" title="Hero trailer" loading="lazy" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <h1 id="hero-title">Explorar</h1>
+                    <div class="hero-meta" id="hero-meta"></div>
+                    <p class="hero-desc" id="hero-desc">Mergulhe em uma nova experiência cinematográfica.</p>
+                    <div class="hero-actions">
+                        <button id="hero-play" class="btn-hero">▶ Assistir</button>
+                        <button id="hero-fav" class="btn-hero btn-hero-outline" onclick="toggleHeroFav()">⭐ Minha Lista</button>
+                        <button class="btn-hero btn-hero-outline" onclick="abrirHeroDetalhes()">ℹ️ Mais</button>
+                    </div>
+                </div>
+                <div class="hero-dots" id="hero-dots"></div>
+            </div>
+            <div id="continue-section" class="section cv-auto" style="display:none;"><div class="section-header"><h3>⏳ Continuar Assistindo</h3></div><div class="continue-row" id="continue-row"></div></div>
+            <div id="home-sections" class="cv-auto"></div>
+        </div>
+        <div id="vod-view" class="main-content cv-auto" style="display:none;"></div>
+        <div id="series-view" class="main-content cv-auto" style="display:none;"></div>
+        <div id="live-view" class="main-content" style="display:none;"><div class="live-container" id="live-content"></div></div>
+        <div id="all-view" class="main-content cv-auto" style="display:none;"></div>
+    </div>
+    
+    <div id="details-view">
+        <button class="btn-back" onclick="fecharDetalhes()">← Voltar</button>
+        <div class="details-hero" id="details-hero"><div id="trailer-container"></div></div>
+        <div class="details-info">
+            <h1 id="detail-title">...</h1>
+            <p class="details-desc" id="detail-desc">Carregando...</p>
+            <div class="details-meta" id="detail-meta"></div>
+            <div class="details-actions"><button id="btn-play" class="btn-hero">▶ Assistir</button><button id="btn-fav" class="btn-hero btn-hero-outline" onclick="toggleDetailFav()">⭐ Favoritar</button></div>
+            <div id="episodes-list" style="display:none;"></div>
+        </div>
+    </div>
+    
+    <div id="channel-modal">
+        <div class="channel-content">
+            <div class="channel-header"><div class="channel-header-logo" id="channel-logo"></div><div style="flex:1;min-width:0;"><h2 id="channel-title">Canal</h2><p id="channel-cat">TV</p></div><button class="channel-close" onclick="fecharChannelModal()">✕</button></div>
+            <div class="channel-body">
+                <div class="channel-player" id="channel-player"><p style="color:#888;">📺 Pronto</p></div>
+                <div class="channel-actions"><button onclick="playChannel()">▶ Assistir</button><button class="btn-secondary" onclick="openChannelFullscreen()">⛶ Tela Cheia</button></div>
+                <h3 style="margin-bottom:12px;font-size:1.1rem;">📺 Programação</h3>
+                <div id="schedule-list"></div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="player-container">
+        <div class="video-wrapper">
+            <button class="btn-player-back" id="btn-back-player" onclick="fecharPlayer()">← Voltar</button>
+            <video id="main-video" playsinline></video>
+            <button class="skip-intro" id="skip-intro" onclick="pularIntro()">⏭ Pular</button>
+            <div class="autoplay-next" id="autoplay-next"><h4 id="autoplay-title">Próximo</h4><div class="autoplay-actions"><button onclick="cancelarAutoplay()">Cancelar</button><button class="btn-secondary" onclick="proximoEpisodioPlay()">▶ Assistir</button></div></div>
+        </div>
+    </div>
+<script>
+const TEMPO_BANNER = 25000;
+const ITEMS_POR_PAGINA = 30;
+const SKIP_INTRO_TIME = 85;
+const SKIP_INTRO_SHOW_DELAY = 15000;
+const SKIP_INTRO_HIDE_DELAY = 10000;
+const SKIP_INTRO_MAX_TIME = 140;
+const CLOUD_URL = 'salvar_dados.php';
+const SYNC_INTERVAL = 20000;
+const SESSAO_DURACAO_MS = 30 * 24 * 60 * 60 * 1000;
+const SESSAO_KEY = 'rabelo_sessao_v1';
+const VALOR_MENSAL = 1.00;
+const WHATSAPP_SUPORTE = '5598981052109';
+const PROXY_URL = 'proxy_iptv.php';
+
+let servidores = [], tipoAtual = 'home', itemSelecionado = null, itemHero = null;
+let playerHls = null, historico = {}, favoritos = {}, voltarFn = null;
+let todosCanais = [], liveFiltro = 'todos', bannerItems = [];
+let bannerIdx = 0, bannerInterval = null, hlsLevels = [];
+let skipIntroTimer = null, skipIntroHideTimer = null;
+let autoplayTimeout = null, autoplayInterval = null;
+let proximoEpi = null, canalAtual = null, focusedEl = null;
+let paginationData = [], paginationPage = 1, navStack = [];
+let cacheVod = { cats: null, items: null }, cacheSeries = { cats: null, items: null };
+let cacheLive = null, searchCache = [], imgObserver = null;
+let splashSaiu = false, cloudUser = null, cloudDirty = false;
+let cloudSyncTimer = null, authMode = 'login', autoLoginTentado = false;
+let statusPlano = null, paymentPollInterval = null, paymentTimerInterval = null;
+let currentPaymentCorr = null, selectedMonths = 1;
+let _manutencaoJaChecada = false;
+
+const ADMIN_USERS_LIST = window.ADMIN_USERS || ['admin', 'rabelo', 'suporte'];
+
+function debounce(fn, ms) { let t; return function(...a) { clearTimeout(t); t = setTimeout(()=>fn.apply(this,a), ms); }; }
+function throttle(fn, ms) { let l=0; return function(...a){ const n=Date.now(); if(n-l>=ms){l=n;fn.apply(this,a);} }; }
+function $(id) { return document.getElementById(id); }
+function isAdminUser() { return cloudUser && ADMIN_USERS_LIST.includes(cloudUser.usuario); }
+function codificar(s) { try { return btoa(unescape(encodeURIComponent(s))); } catch(e) { return s; } }
+function decodificar(s) { try { return decodeURIComponent(escape(atob(s))); } catch(e) { return ''; } }
+function salvarSessao(u, p) { try { localStorage.setItem(SESSAO_KEY, JSON.stringify({u:codificar(u), p:codificar(p), ts:Date.now(), v:1})); } catch(e) {} }
+function obterSessao() {
+    try {
+        const d = JSON.parse(localStorage.getItem(SESSAO_KEY) || 'null');
+        if (!d || !d.u || !d.p) return null;
+        if (Date.now() - d.ts > SESSAO_DURACAO_MS) { localStorage.removeItem(SESSAO_KEY); return null; }
+        return { usuario: decodificar(d.u), senha: decodificar(d.p), timestamp: d.ts };
+    } catch(e) { return null; }
+}
+function limparSessao() { try { localStorage.removeItem(SESSAO_KEY); } catch(e) {} }
+function shuffle(a) { const x=[...a]; for(let i=x.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[x[i],x[j]]=[x[j],x[i]];} return x; }
+function formatarTempo(s) { const m=Math.floor(s/60); return `${m}:${String(Math.floor(s%60)).padStart(2,'0')}`; }
+function normTrailer(v) {
+    if (!v) return null; const u = String(v).trim();
+    if (/^[A-Za-z0-9_-]{6,}$/.test(u)) return u;
+    try { const url = new URL(u); if (url.hostname.includes('youtu.be')) return url.pathname.replace(/^\/+/,'').split('/')[0]; if (url.hostname.includes('youtube.com')) return url.searchParams.get('v') || (url.pathname.match(/\/(?:embed|shorts|live)\/([^/?]+)/i)||[])[1]; } catch(e){}
+    const m = u.match(/(?:v=|youtu\.be\/|\/embed\/|\/shorts\/|\/live\/)([A-Za-z0-9_-]{6,})/i);
+    return m ? m[1] : null;
+}
+function obterTrailer(info, item) {
+    const cs = [info?.youtube_trailer, info?.trailer, info?.info?.youtube_trailer, info?.info?.trailer, item?.youtube_trailer, item?.trailer];
+    for (const c of cs) { const id = normTrailer(c); if (id) return id; }
+    return null;
+}
+function toast(msg, tipo='info', comBotao=false) {
+    const c = $('toast-container'), t = document.createElement('div');
+    t.className = `toast ${tipo}`;
+    const txt = document.createElement('span'); txt.textContent = msg; t.appendChild(txt);
+    c.appendChild(t);
+    requestAnimationFrame(() => t.classList.add('show'));
+    setTimeout(() => { t.classList.remove('show'); setTimeout(()=>t.remove(),400); }, 3000);
+}
+function initImgObserver() {
+    if (imgObserver || !('IntersectionObserver' in window)) return;
+    imgObserver = new IntersectionObserver(entries => {
+        entries.forEach(en => { if (en.isIntersecting) { const img=en.target; if(img.dataset.src){img.src=img.dataset.src;img.removeAttribute('data-src');} imgObserver.unobserve(img); } });
+    }, { rootMargin: '400px 0px', threshold: 0.01 });
+}
+function lazyImg(img) {
+    if (!img) return;
+    if (img.complete && img.naturalHeight !== 0) { img.classList.add('loaded'); return; }
+    img.addEventListener('load', () => img.classList.add('loaded'), { once: true });
+    img.addEventListener('error', () => { img.classList.add('loaded'); }, { once: true });
+}
+
+// ============ MANUTENÇÃO ============
+async function checarManutencaoPublica() {
+    if (_manutencaoJaChecada) return;
+    _manutencaoJaChecada = true;
+    try {
+        const r = await fetch('salvar_dados.php?action=check_manutencao&t=' + Date.now(), {
+            cache: 'no-store',
+            headers: { 'Cache-Control': 'no-cache' }
+        });
+        const data = await r.json();
+        if (data && data.manutencao === true) {
+            aplicarTelaManutencao(data.mensagem, data.previsao, data.whatsapp);
+        } else {
+            esconderManutencao();
+        }
+    } catch(e) {
+        _manutencaoJaChecada = false;
+    }
+}
+
+function aplicarTelaManutencao(msg, previsao, whatsapp) {
+    $('manutencao-mensagem').textContent = msg || 'Estamos em manutenção!';
+    $('manutencao-previsao').textContent = '⏰ Previsão: ' + (previsao || 'em breve');
+    if (whatsapp) {
+        $('manutencao-whatsapp').href = 'https://wa.me/' + whatsapp + '?text=' + encodeURIComponent('Olá! Quando o sistema volta?');
+    }
+    $('manutencao-overlay').classList.add('active');
+}
+
+function esconderManutencao() {
+    $('manutencao-overlay').classList.remove('active');
+    _manutencaoJaChecada = false;
+}
+
+// ============ BROADCAST ============
+async function checarBroadcastPublico() {
+    try {
+        const r = await fetch('salvar_dados.php?action=get_broadcast&t=' + Date.now(), {cache: 'no-store'});
+        const data = await r.json();
+        if (data && data.broadcast) {
+            window._currentBroadcast = data.broadcast;
+            setTimeout(() => mostrarBroadcast(data.broadcast), 1200);
+        }
+    } catch(e) {}
+}
+
+function mostrarBroadcast(bc) {
+    if (!bc) return;
+    try {
+        const seen = JSON.parse(localStorage.getItem('bc_vistos') || '{}');
+        if (seen[bc.id]) return;
+    } catch(e) {}
+    $('broadcast-title').textContent = bc.titulo || 'Aviso';
+    $('broadcast-msg').textContent = bc.msg || '';
+    if (bc.imagem) { $('broadcast-img').src = bc.imagem; $('broadcast-img-wrap').style.display = 'block'; }
+    else { $('broadcast-img-wrap').style.display = 'none'; }
+    if (bc.link) { $('broadcast-link-btn').href = bc.link; $('broadcast-link-btn').style.display = 'flex'; }
+    else { $('broadcast-link-btn').style.display = 'none'; }
+    $('broadcast-overlay').classList.add('active');
+}
+
+function fecharBroadcast() {
+    $('broadcast-overlay').classList.remove('active');
+    const bc = window._currentBroadcast;
+    if (bc) {
+        try {
+            const seen = JSON.parse(localStorage.getItem('bc_vistos') || '{}');
+            seen[bc.id] = Date.now();
+            localStorage.setItem('bc_vistos', JSON.stringify(seen));
+        } catch(e) {}
+    }
+}
+
+// ============ SPLASH ============
+function sairSplash() {
+    if (splashSaiu) return; splashSaiu = true;
+    const s = $('splash'); s.classList.add('splash-out');
+    setTimeout(() => {
+        s.style.display = 'none';
+        if (!cloudUser) mostrarLogin();
+    }, 800);
+}
+$('splash').addEventListener('click', sairSplash, { once: true });
+setTimeout(sairSplash, 5500);
+
+// ============ API CLOUD ============
+async function cloudRegister(usuario, senha, email) {
+    const r = await fetch(`${CLOUD_URL}?action=register&usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}&email=${encodeURIComponent(email)}`);
+    return r.json();
+}
+async function cloudLogin(usuario, senha) {
+    const r = await fetch(`${CLOUD_URL}?action=login&usuario=${encodeURIComponent(usuario)}&senha=${encodeURIComponent(senha)}`);
+    return r.json();
+}
+async function cloudStatus() {
+    if (!cloudUser) return null;
+    const r = await fetch(`${CLOUD_URL}?action=status&usuario=${encodeURIComponent(cloudUser.usuario)}&senha=${encodeURIComponent(cloudUser.senha)}`);
+    return r.json();
+}
+async function cloudPost(action, body=null) {
+    let url = `${CLOUD_URL}?action=${action}`;
+    if (cloudUser) url += `&usuario=${encodeURIComponent(cloudUser.usuario)}&senha=${encodeURIComponent(cloudUser.senha)}`;
+    const opt = {}; if (body!==null) { opt.method='POST'; opt.headers={'Content-Type':'application/json'}; opt.body=JSON.stringify(body); }
+    const r = await fetch(url, opt); return r.json();
+}
+async function cloudSave() {
+    if (!cloudUser) return false;
+    try { const r = await cloudPost('save', { historico, favoritos });
+        if (r.status==='salvo') { cloudDirty=false; atualizarSyncDot(); return true; } return false; } catch(e) { return false; }
+}
+function atualizarSyncDot() { const d=$('sync-dot'); if(d) d.classList.toggle('dirty', cloudDirty); }
+function atualizarPlanDot() { const d = $('plan-dot'); if (!d || !statusPlano) return; d.className = 'plan-dot ' + (statusPlano.tipo || 'expired'); }
+function iniciarSync() { if (cloudSyncTimer) clearInterval(cloudSyncTimer); cloudSyncTimer = setInterval(()=>{ if(cloudDirty) cloudSave(); }, SYNC_INTERVAL); }
+function pararSync() { if (cloudSyncTimer) clearInterval(cloudSyncTimer); cloudSyncTimer = null; }
+
+// ============ AUTO-LOGIN ============
+async function tentarAutoLogin() {
+    if (autoLoginTentado) return; autoLoginTentado = true;
+    const sess = obterSessao();
+    if (!sess) return;
+    const st = $('autologin-status'), hi = $('splash-hint');
+    if (st) st.classList.add('show'); if (hi) hi.style.display = 'none';
+    try {
+        const r = await cloudLogin(sess.usuario, sess.senha);
+        if (r.erro || r.manutencao) {
+            limparSessao();
+            if (r.manutencao) setTimeout(() => aplicarTelaManutencao(r.mensagem, r.previsao, r.whatsapp), 1000);
+            return;
+        }
+        cloudUser = { usuario: sess.usuario, senha: sess.senha };
+        localStorage.setItem('rabelo_ultimo_user', sess.usuario);
+        salvarSessao(sess.usuario, sess.senha);
+        statusPlano = r.dados?.status_plano || null;
+        if (r.broadcast) window._currentBroadcast = r.broadcast;
+        await iniciarApp(r.dados || { historico:{}, favoritos:{} }, true);
+        if (st) st.innerHTML = `<span>✅ Conectado como <strong>${sess.usuario}</strong></span>`;
+    } catch(e) {
+        if (st) st.innerHTML = '<span>⚠️ Sem conexão</span>';
+    }
+}
+
+// ============ LOGIN ============
+function mostrarLogin() {
+    $('login-screen').classList.add('active');
+    const last = localStorage.getItem('rabelo_ultimo_user');
+    if (last) { $('last-user-box').style.display='flex'; $('last-user-name').textContent=last; setTimeout(()=>$('login-pass').focus(),200); }
+    else { setTimeout(()=>$('login-user').focus(),200); }
+    $('login-pass').value='';
+}
+function limparUltimoUser() { localStorage.removeItem('rabelo_ultimo_user'); $('last-user-box').style.display='none'; $('login-user').value=''; $('login-user').focus(); }
+function toggleVisibilidade(id, btn) { const i=$(id); if(i.type==='password'){i.type='text';btn.textContent='🙈';} else{i.type='password';btn.textContent='👁';} }
+function alternarAuth() {
+    authMode = authMode==='login'?'register':'login';
+    const isReg = authMode==='register';
+    $('form-title').textContent = isReg?'Criar Conta':'Entrar';
+    $('form-subtitle').textContent = isReg?'Crie sua conta - 24h grátis 🎁':'Acesse sua conta na nuvem';
+    $('email-group').style.display = isReg?'flex':'none';
+    $('pass2-group').style.display = isReg?'flex':'none';
+    $('btn-text').textContent = isReg?'Criar Conta':'Entrar';
+    $('toggle-msg').textContent = isReg?'Já tem conta?':'Não tem conta?';
+    $('toggle-link').textContent = isReg?'Entrar':'Criar conta';
+    $('login-pass').setAttribute('autocomplete', isReg?'new-password':'current-password');
+    $('login-error').classList.remove('show');
+    $('remember-row').style.display = isReg?'none':'flex';
+    $('login-user').focus();
+}
+function showLoginError(msg) { const e=$('login-error'); e.textContent=msg; e.classList.add('show'); setTimeout(()=>e.classList.remove('show'),6000); }
+function setLoginLoading(l) { const b=$('login-btn'); if(l){b.disabled=true;b.innerHTML='<span class="btn-spinner"></span><span>Autenticando...</span>';} else{b.disabled=false;b.innerHTML=`<span id="btn-text">${authMode==='register'?'Criar Conta':'Entrar'}</span>`;} }
+
+async function submeterAuth() {
+    const u = $('login-user').value.trim(), p = $('login-pass').value, p2 = $('login-pass2').value;
+    const email = $('login-email').value.trim();
+    const lembrar = $('remember-me').checked;
+    if (!u||!p) { showLoginError('Preencha usuário e senha'); return; }
+    if (u.length<3) { showLoginError('Usuário: mínimo 3 caracteres'); return; }
+    if (!/^[a-zA-Z0-9_]+$/.test(u)) { showLoginError('Use apenas letras, números e _'); return; }
+    if (p.length<4) { showLoginError('Senha: mínimo 4 caracteres'); return; }
+    if (authMode==='register') {
+        if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { showLoginError('E-mail inválido'); return; }
+        if (p!==p2) { showLoginError('Senhas não conferem'); return; }
+    }
+    setLoginLoading(true); $('login-error').classList.remove('show');
+    try {
+        let resp;
+        if (authMode==='register') {
+            resp = await cloudRegister(u, p, email);
+            if (resp.erro) throw new Error(resp.erro);
+            if (resp.manutencao === true) {
+                aplicarTelaManutencao(resp.mensagem, resp.previsao, resp.whatsapp);
+                setLoginLoading(false); return;
+            }
+            toast('✅ Conta criada! 24h grátis liberadas 🎁', 'success');
+        } else {
+            resp = await cloudLogin(u, p);
+            if (resp.erro) throw new Error(resp.erro);
+            if (resp.manutencao === true) {
+                aplicarTelaManutencao(resp.mensagem, resp.previsao, resp.whatsapp);
+                setLoginLoading(false); return;
+            }
+        }
+        esconderManutencao();
+        cloudUser = { usuario: u, senha: p };
+        localStorage.setItem('rabelo_ultimo_user', u);
+        if (lembrar && authMode==='login') salvarSessao(u, p); else if (!lembrar) limparSessao();
+        statusPlano = resp.dados?.status_plano || null;
+        if (resp.broadcast) {
+            window._currentBroadcast = resp.broadcast;
+            setTimeout(() => mostrarBroadcast(resp.broadcast), 1500);
+        }
+        await iniciarApp(resp.dados || { historico:{}, favoritos:{} }, false);
+    } catch(e) { showLoginError(e.message||'Erro de conexão'); }
+    finally { setLoginLoading(false); }
+}
+
+async function iniciarApp(dados, isAutoLogin=false) {
+    esconderManutencao();
+    historico = dados.historico||{}; favoritos = dados.favoritos||{};
+    if (isAutoLogin) {
+        $('app-nav').style.display='flex'; $('app-content').style.display='block';
+        $('user-display').textContent = cloudUser.usuario;
+        atualizarSyncDot(); atualizarPlanDot();
+        setTimeout(irFullscreen, 300); iniciarSync();
+        window.addEventListener('beforeunload', () => { if(cloudDirty) cloudSave(); });
+        await carregarServidores(); navStack=['home']; carregarMenu('home'); carregarCatalogoCompleto();
+        checarBroadcastPublico();
+        await checarStatusPlano(true);
+    } else {
+        const login=$('login-screen'); login.style.transition='opacity 0.5s, transform 0.5s';
+        login.style.opacity='0'; login.style.transform='scale(1.1)'; login.style.filter='blur(10px)';
+        setTimeout(async () => {
+            login.classList.remove('active'); login.style.cssText='';
+            $('app-nav').style.display='flex'; $('app-content').style.display='block';
+            $('user-display').textContent = cloudUser.usuario;
+            atualizarSyncDot(); atualizarPlanDot();
+            setTimeout(irFullscreen, 300); iniciarSync();
+            window.addEventListener('beforeunload', () => { if(cloudDirty) cloudSave(); });
+            await carregarServidores(); navStack=['home']; carregarMenu('home'); carregarCatalogoCompleto();
+            checarBroadcastPublico();
+            await checarStatusPlano(false);
+        }, 500);
+    }
+}
+
+async function checarStatusPlano(isAuto) {
+    const r = await cloudStatus();
+    if (!r || r.erro) return;
+    statusPlano = r.status_plano;
+    aplicarStatusPlano(statusPlano);
+}
+
+function aplicarStatusPlano(st) {
+    atualizarPlanDot();
+    if (!st) return;
+    if (st.acesso) {
+        $('plan-gate').classList.remove('active');
+        if (st.tipo === 'trial') {
+            const tb = $('trial-banner'); if (tb) { tb.style.display='block'; $('trial-text').textContent = `🎁 Período de teste - ${st.horas_restantes||st.dias_restantes*24}h restantes`; }
+        } else { $('trial-banner').style.display='none'; }
+    } else {
+        $('plan-gate').classList.add('active');
+    }
+}
+
+// ============ SERVIDORES ============
+async function carregarServidores() {
+    try {
+        const r = await fetch(`${PROXY_URL}?action=listar_online&t=${Date.now()}`);
+        const data = await r.json();
+        if (data.status === 'ok' && data.servidores_online && data.servidores_online.length > 0) {
+            servidores = data.servidores_online.map(s => ({...s, host: s.protocolo || s.host}));
+            console.log(`✅ ${servidores.length} servidor(es) online via proxy`);
+            return;
+        }
+        const results = await Promise.all(meusServidores.map(async s => {
+            try { const c=new AbortController(); const t=setTimeout(()=>c.abort(),8000);
+                const r=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}`,{signal:c.signal});
+                clearTimeout(t); const d=await r.json(); return d?.user_info?.status==='Active' ? s : null;
+            } catch(e) { return null; }
+        }));
+        servidores = results.filter(s => s);
+        if (!servidores.length) mostrarErroSemServidor(data);
+        else console.log(`✅ ${servidores.length} servidor(es) via direta`);
+    } catch(e) {
+        console.error('Erro carregarServidores:', e);
+        toast('Erro ao conectar nos servidores', 'error');
+    }
+}
+
+function mostrarErroSemServidor(diagData) {
+    let motivo = diagData?.resultados?.[0]?.primeiro_motivo || 'Verifique credenciais';
+    toast(`❌ Nenhum servidor: ${motivo}`, 'error', true);
+}
+
+function recarregarServidoresManual() { fecharDiagModal(); carregarServidores(); }
+
+async function abrirDiagModal() {
+    $('diag-modal').classList.add('active');
+    $('diag-body').innerHTML = '<div style="text-align:center;padding:20px;"><div class="btn-spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#00e5ff;width:32px;height:32px;margin:0 auto;"></div><p style="color:var(--muted);margin-top:12px;">Testando...</p></div>';
+    try {
+        const r = await fetch(`${PROXY_URL}?action=diagnostico&t=${Date.now()}`);
+        const data = await r.json();
+        if (!data || !data.resultados) { $('diag-body').innerHTML = '<p style="text-align:center;color:var(--muted);">Sem dados</p>'; return; }
+        let html = `<div style="background:rgba(0,229,255,0.08);padding:12px;border-radius:10px;margin-bottom:14px;font-size:0.88rem;">📊 Total: ${data.total_servidores} | Online: <strong style="color:var(--success)">${data.servidores_online}</strong></div>`;
+        data.resultados.forEach((r) => {
+            const ok = r.sucesso;
+            html += `<div style="padding:10px 14px;background:rgba(255,255,255,0.03);border-radius:10px;margin-bottom:8px;border-left:3px solid ${ok?'#00ff88':'#ff2a5f'};"><div style="font-weight:700;font-size:0.9rem;">${ok?'✅':'❌'} ${r.host_original}</div><div style="color:var(--muted);font-size:0.78rem;margin-top:2px;">Status: ${r.primeiro_status}</div></div>`;
+        });
+        $('diag-body').innerHTML = html;
+    } catch(e) {
+        $('diag-body').innerHTML = '<div style="padding:10px;background:rgba(255,42,95,0.1);border-radius:10px;">❌ ' + e.message + '</div>';
+    }
+}
+
+function fecharDiagModal() { $('diag-modal').classList.remove('active'); }
+
+async function sairConta() {
+    if (!confirm('Sair da conta?')) return;
+    if (cloudDirty) await cloudSave();
+    pararSync(); cloudUser=null; historico={}; favoritos={};
+    cacheVod={cats:null,items:null}; cacheSeries={cats:null,items:null}; cacheLive=null; searchCache=[];
+    $('app-nav').style.display='none'; $('app-content').style.display='none'; $('trial-banner').style.display='none';
+    if (document.fullscreenElement) document.exitFullscreen?.();
+    mostrarLogin(); toast('👋 Até logo!','success');
+}
+
+function salvarDados() {
+    if (!cloudUser) return;
+    try { localStorage.setItem('rabelo_cache_'+cloudUser.usuario, JSON.stringify({historico,favoritos})); } catch(e){}
+    cloudDirty=true; atualizarSyncDot();
+}
+
+function irFullscreen() {
+    if (document.fullscreenElement) return;
+    try { const el=document.documentElement;
+        if (el.requestFullscreen) el.requestFullscreen();
+        else if (el.webkitRequestFullscreen) el.webkitRequestFullscreen();
+    } catch(e) {}
+}
+
+document.addEventListener('click', (e) => {
+    const t=e.target;
+    if (['INPUT','TEXTAREA','BUTTON','A','VIDEO'].includes(t.tagName)) return;
+    if (t.closest('button, a, input, .card-wrap, .carousel-arrow, .sidebar a, .live-card, .continue-card, .episode-btn, .search-item, .live-filter, .hero-dot, .schedule-item, .channel-close, .channel-actions button, .view-all, .btn-back, .btn-player-back, .skip-intro, .autoplay-actions button, .modal-content, .month-btn, .broadcast-close, .broadcast-btn, .whatsapp-btn-m')) return;
+    if (t.closest('#search-modal, #channel-modal, #player-container, #details-view, #login-screen, #splash, .modal-overlay, #plan-gate, #manutencao-overlay, #broadcast-overlay')) return;
+    irFullscreen();
+});
+
+function whatsappLink(msg) { return `https://wa.me/${WHATSAPP_SUPORTE}?text=${encodeURIComponent(msg)}`; }
+function abrirSuporte() { window.open(whatsappLink('Olá! Preciso de suporte.'), '_blank'); }
+
+let recoverEmail = '';
+function abrirRecuperacaoSenha() {
+    $('recover-modal').classList.add('active');
+    $('recover-step1').style.display='block'; $('recover-step2').style.display='none';
+    $('recover-code-display').style.display='none';
+    $('recover-btn1').style.display='inline-block'; $('recover-btn2').style.display='none';
+    $('recover-email').value = ''; $('recover-error').classList.remove('show');
+    setTimeout(()=>$('recover-email').focus(),200);
+}
+function fecharRecuperacaoSenha() { $('recover-modal').classList.remove('active'); }
+async function solicitarCodigoRecuperacao() {
+    const email = $('recover-email').value.trim();
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { const e=$('recover-error'); e.textContent='E-mail inválido'; e.classList.add('show'); return; }
+    recoverEmail = email;
+    $('recover-btn1').disabled = true; $('recover-btn1').innerHTML = '<span class="btn-spinner"></span>';
+    try {
+        const r = await fetch(`${CLOUD_URL}?action=recover_request&email=${encodeURIComponent(email)}`);
+        const data = await r.json();
+        if (data.erro) { const e=$('recover-error'); e.textContent=data.erro; e.classList.add('show'); }
+        else {
+            $('recover-code-display').style.display='block';
+            $('recover-code-value').textContent = data.codigo_debug || '------';
+            $('recover-step1').style.display='none'; $('recover-step2').style.display='block';
+            $('recover-btn1').style.display='none'; $('recover-btn2').style.display='inline-block';
+            toast(data.email_enviado ? '✅ Código enviado' : '⚠️ Use o código na tela', data.email_enviado?'success':'error');
+        }
+    } catch(e) { const er=$('recover-error'); er.textContent='Erro de conexão'; er.classList.add('show'); }
+    finally { $('recover-btn1').disabled=false; $('recover-btn1').innerHTML='Enviar Código'; }
+}
+async function confirmarRecuperacao() {
+    const codigo = $('recover-codigo').value.trim();
+    const novaSenha = $('recover-novasenha').value;
+    if (!codigo || codigo.length!==6) { const e=$('recover-error2'); e.textContent='Código: 6 dígitos'; e.classList.add('show'); return; }
+    if (!novaSenha || novaSenha.length<4) { const e=$('recover-error2'); e.textContent='Nova senha: mínimo 4 caracteres'; e.classList.add('show'); return; }
+    $('recover-btn2').disabled = true; $('recover-btn2').innerHTML='<span class="btn-spinner"></span>';
+    try {
+        const r = await fetch(`${CLOUD_URL}?action=recover_confirm&email=${encodeURIComponent(recoverEmail)}&codigo=${codigo}&nova_senha=${encodeURIComponent(novaSenha)}`);
+        const data = await r.json();
+        if (data.erro) { const e=$('recover-error2'); e.textContent=data.erro; e.classList.add('show'); }
+        else { toast('✅ Senha alterada!','success'); fecharRecuperacaoSenha(); $('login-pass').focus(); }
+    } catch(e) { const er=$('recover-error2'); er.textContent='Erro de conexão'; er.classList.add('show'); }
+    finally { $('recover-btn2').disabled=false; $('recover-btn2').innerHTML='Redefinir Senha'; }
+}
+
+async function abrirContaModal() {
+    if (!cloudUser) return;
+    $('account-modal').classList.add('active');
+    $('account-body').innerHTML = '<div style="text-align:center;padding:20px;"><div class="btn-spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#00e5ff;width:32px;height:32px;margin:0 auto;"></div></div>';
+    const r = await cloudStatus();
+    if (r?.erro) { $('account-body').innerHTML = '<p style="color:var(--danger)">Erro</p>'; return; }
+    statusPlano = r.status_plano; atualizarPlanDot();
+    const isAdm = isAdminUser();
+    const st = r.status_plano;
+    const expira = st?.expira ? new Date(st.expira) : null;
+    const expiraStr = expira ? expira.toLocaleDateString('pt-BR')+' às '+expira.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'}) : '∞';
+    let classeCard='', classeNum='', icone='', numero='', mensagem='';
+    if (isAdm) { classeCard='admin'; classeNum='admin'; icone='♾️'; numero='∞'; mensagem='Acesso permanente'; }
+    else if (st?.tipo==='trial') { classeCard='trial'; classeNum='trial'; icone='🎁'; numero=st.horas_restantes+'h'; mensagem='Período de teste'; }
+    else if (st?.acesso) { classeCard=''; classeNum=''; icone='✅'; numero=st.dias_restantes; mensagem='Plano ativo'; }
+    else { classeCard='expired'; classeNum='expired'; icone='⚠️'; numero='0'; mensagem='Plano expirado'; }
+    $('account-body').innerHTML = `
+        <div class="plan-info-card ${classeCard}">
+            <div class="plan-status-row"><span class="plan-status-label">Status</span><span class="plan-status-value">${mensagem}</span></div>
+            <div class="plan-big-number ${classeNum}">${icone} ${numero}</div>
+            <div class="plan-row"><span class="label">Usuário</span><span class="value">${cloudUser.usuario}</span></div>
+            <div class="plan-row"><span class="label">E-mail</span><span class="value">${r.email||'-'}</span></div>
+            ${!isAdm?`<div class="plan-row"><span class="label">Expira</span><span class="value">${expiraStr}</span></div>`:''}
+        </div>
+        ${!isAdm?`<button class="login-btn" onclick="fecharContaModal();abrirPaymentModal();" style="background:linear-gradient(135deg,#00ff88,#00b894);color:#000;">💎 ${st?.acesso?'Adicionar Mais Meses':'Assinar Agora'}</button>`:'<div style="background:rgba(0,255,136,0.1);padding:14px;border-radius:12px;text-align:center;color:var(--success);font-weight:700;">♾️ ADMIN vitalício</div>'}
+        <a class="whatsapp-btn" href="${whatsappLink('Olá! Dúvidas sobre meu plano.')}" target="_blank" style="margin-top:10px;text-decoration:none;">💬 Suporte</a>
+    `;
+}
+function fecharContaModal() { $('account-modal').classList.remove('active'); }
+
+function abrirPaymentModal(meses=1) {
+    if (!cloudUser) return;
+    selectedMonths = meses;
+    $('payment-modal').classList.add('active');
+    $('payment-qr-area').style.display='none'; $('payment-manual-area').style.display='none';
+    $('btn-gerar-pix').style.display='block';
+    $('whatsapp-suporte').href = whatsappLink(`Olá! Quero adicionar ${meses} mês(es).`);
+    renderMonthSelector();
+}
+function fecharPaymentModal() {
+    $('payment-modal').classList.remove('active');
+    if (paymentPollInterval) clearInterval(paymentPollInterval);
+    if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+    paymentPollInterval = null; paymentTimerInterval = null;
+}
+function renderMonthSelector() {
+    const opcoes = [
+        {m:1, label:'1 mês', preco:1}, {m:2, label:'2 meses', preco:2},
+        {m:3, label:'3 meses', preco:3, popular:true},
+        {m:6, label:'6 meses', preco:6}, {m:12, label:'1 ano', preco:12, melhor:true}
+    ];
+    $('month-selector').innerHTML = opcoes.map(o => `
+        <div class="month-btn ${selectedMonths===o.m?'selected':''}" onclick="selecionarMeses(${o.m})">
+            <div class="qtd">${o.label}</div>
+            <div class="preco">R$ ${o.preco.toFixed(2).replace('.',',')}${o.popular?' ⭐':''}${o.melhor?' 🔥':''}</div>
+        </div>
+    `).join('');
+}
+function selecionarMeses(m) {
+    selectedMonths = m;
+    renderMonthSelector();
+    $('payment-qr-area').style.display='none'; $('payment-manual-area').style.display='none';
+    $('btn-gerar-pix').style.display='block';
+    $('whatsapp-suporte').href = whatsappLink(`Olá! Quero adicionar ${m} mês(es).`);
+}
+function gerarQRCodePix(brCode) {
+    try { const qr = qrcode(0, 'M'); qr.addData(brCode); qr.make(); return qr.createDataURL(8, 0); }
+    catch(e) { return ''; }
+}
+async function gerarPagamentoPix() {
+    if (isAdminUser()) { toast('Admins não precisam pagar','error'); return; }
+    $('btn-gerar-pix').disabled = true;
+    $('btn-gerar-pix').innerHTML = '<span class="btn-spinner"></span> Gerando...';
+    try {
+        const r = await fetch(`criar_pagamento.php?action=criar&usuario=${encodeURIComponent(cloudUser.usuario)}&meses=${selectedMonths}`);
+        const data = await r.json();
+        if (data.status==='criado') {
+            $('payment-qr-area').style.display='block'; $('payment-manual-area').style.display='none'; $('btn-gerar-pix').style.display='none';
+            const qrImg = gerarQRCodePix(data.brCode);
+            $('pix-qrcode').innerHTML = qrImg ? `<img src="${qrImg}" alt="QR" style="max-width:280px;margin:0 auto;border-radius:8px;">` : '<p style="color:#000">Use o código abaixo</p>';
+            $('pix-code').value = data.brCode || '';
+            currentPaymentCorr = data.correlationID;
+            iniciarPolling(data.expira);
+            toast('📱 QR Code gerado!','success');
+        } else if (data.status==='fallback') {
+            $('payment-manual-area').style.display='block'; $('btn-gerar-pix').style.display='none';
+            $('manual-valor').textContent = 'R$ ' + data.valor.toFixed(2).replace('.',',');
+            $('manual-chave').textContent = data.pix_chave;
+        } else { toast(data.erro||'Erro','error'); }
+    } catch(e) { toast('Erro: ' + e.message,'error'); }
+    finally { $('btn-gerar-pix').disabled=false; $('btn-gerar-pix').innerHTML='💎 Gerar Pix'; }
+}
+async function marcarComoPago() {
+    if (!currentPaymentCorr) { toast('Gere um Pix primeiro','error'); return; }
+    const btn = $('btn-ja-paguei');
+    if (btn) { btn.disabled = true; btn.innerHTML = '<span class="btn-spinner"></span>'; }
+    try {
+        const r = await fetch(`criar_pagamento.php?action=marcar_pago&usuario=${encodeURIComponent(cloudUser.usuario)}&correlationID=${encodeURIComponent(currentPaymentCorr)}`);
+        const data = await r.json();
+        if (data.erro) {
+            toast(data.erro, 'error');
+            if (data.whatsapp_link) window.open(data.whatsapp_link, '_blank');
+        } else {
+            $('payment-status-box').className = 'payment-status pending';
+            $('payment-status-box').innerHTML = '<div style="font-size:1rem;font-weight:800;">⏳ Aguardando Admin</div>';
+            toast('✅ ' + data.mensagem, 'success');
+        }
+    } catch(e) { toast('Erro: ' + e.message, 'error'); }
+    finally { if (btn) { btn.disabled = false; btn.innerHTML = '✅ Já Paguei'; } }
+}
+function copiarPix() {
+    const inp = $('pix-code');
+    if (!inp.value) { toast('Código vazio','error'); return; }
+    navigator.clipboard.writeText(inp.value).then(() => toast('📋 Copiado!','success')).catch(() => { inp.select(); document.execCommand('copy'); });
+}
+function iniciarPolling(expira) {
+    if (paymentPollInterval) clearInterval(paymentPollInterval);
+    if (paymentTimerInterval) clearInterval(paymentTimerInterval);
+    const expiraTs = expira ? new Date(expira).getTime() : Date.now() + 3600000;
+    paymentTimerInterval = setInterval(() => {
+        const rest = Math.max(0, expiraTs - Date.now());
+        const m = Math.floor(rest/60000), s = Math.floor((rest%60000)/1000);
+        $('payment-timer').textContent = `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+        if (rest <= 0) { clearInterval(paymentTimerInterval); clearInterval(paymentPollInterval); toast('⏰ Pix expirado','error'); fecharPaymentModal(); abrirPaymentModal(selectedMonths); }
+    }, 1000);
+    paymentPollInterval = setInterval(async () => {
+        if (!currentPaymentCorr) return;
+        try {
+            const r = await fetch(`criar_pagamento.php?action=verificar&correlationID=${encodeURIComponent(currentPaymentCorr)}`);
+            const data = await r.json();
+            if (data.status==='pago') {
+                clearInterval(paymentPollInterval); clearInterval(paymentTimerInterval);
+                $('payment-status-box').className = 'payment-status paid';
+                $('payment-status-box').innerHTML = '<div style="font-size:1.5rem;font-weight:900;">✅ Confirmado!</div>';
+                toast('🎉 Plano ativado!','success');
+                setTimeout(async () => { await checarStatusPlano(false); fecharPaymentModal(); }, 3000);
+            } else if (data.status==='aguardando_confirmacao') {
+                $('payment-status-box').innerHTML = '<div style="font-size:1rem;font-weight:800;">⏳ Aguardando Admin</div>';
+            }
+        } catch(e) {}
+    }, 5000);
+}
+
+function setupActivity() { let t; const show=()=>{document.body.classList.add('user-active');clearTimeout(t);t=setTimeout(()=>document.body.classList.remove('user-active'),3000);};['mousemove','touchstart','touchmove','keydown','click'].forEach(ev=>document.addEventListener(ev,show,{passive:true})); }
+function setupTVNav() {
+    document.addEventListener('keydown', (e) => {
+        if (['INPUT','TEXTAREA'].includes(e.target.tagName)) return;
+        if (!['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','Enter'].includes(e.key)) return;
+        if (e.key==='Enter' && focusedEl) { e.preventDefault(); focusedEl.click(); return; }
+        e.preventDefault();
+        const items = Array.from(document.querySelectorAll('.card-wrap, .continue-card, .live-card, .sidebar a, button:not(:disabled), .live-filter, .hero-dot, .carousel-arrow, .view-all, .episode-btn, .search-item, .schedule-item, .channel-close, .channel-actions button, .btn-back, .btn-player-back, .skip-intro, .autoplay-actions button, .sidebar-icon, .month-btn')).filter(el => el.offsetParent !== null && !el.disabled);
+        if (!items.length) return;
+        const cur = items.indexOf(focusedEl); let next = cur;
+        if (e.key==='ArrowRight') next = Math.min(cur+1, items.length-1);
+        else if (e.key==='ArrowLeft') next = Math.max(cur-1, 0);
+        else if (e.key==='ArrowDown') { if(cur<0) next=0; else { const r=items[cur].getBoundingClientRect(); const cands=items.filter(el=>{const er=el.getBoundingClientRect();return er.top>r.top+30&&Math.abs(er.left-r.left)<300;}); if(cands.length) next=items.indexOf(cands[0]); } }
+        else if (e.key==='ArrowUp') { const r=items[cur]?.getBoundingClientRect(); if(r){const cands=items.filter(el=>{const er=el.getBoundingClientRect();return er.top<r.top-30&&Math.abs(er.left-r.left)<300;}); if(cands.length) next=items.indexOf(cands[cands.length-1]);} }
+        if (items[next]) { if(focusedEl) focusedEl.classList.remove('focused-tv'); focusedEl=items[next]; focusedEl.classList.add('focused-tv'); focusedEl.scrollIntoView({behavior:'smooth',block:'center'}); }
+    });
+}
+function setupTouch() { let sx=0,sy=0; document.addEventListener('touchstart',e=>{sx=e.touches[0].clientX;sy=e.touches[0].clientY;},{passive:true}); document.addEventListener('touchend',e=>{const dx=e.changedTouches[0].clientX-sx;const dy=e.changedTouches[0].clientY-sy;if(Math.abs(dx)>80&&Math.abs(dx)>Math.abs(dy)&&dx>0)voltarNavegacao();},{passive:true}); }
+const setupHideNav = throttle(() => { const nav=$('app-nav'); if(!nav) return; const sy=window.scrollY; if(sy>100&&sy>lastScrollY) nav.classList.add('nav-hidden'); else nav.classList.remove('nav-hidden'); lastScrollY=sy; }, 100);
+let lastScrollY=0; window.addEventListener('scroll', setupHideNav, {passive:true});
+function setupPlayerControls() { const v=$('main-video'),c=$('player-container'),b=$('btn-back-player'); let t; const show=()=>{b.classList.add('show');clearTimeout(t);t=setTimeout(()=>b.classList.remove('show'),3000);}; c.addEventListener('mousemove',show); c.addEventListener('touchstart',show,{passive:true}); c.addEventListener('click',show); }
+
+function voltarNavegacao() {
+    if (navStack.length<=1) return; navStack.pop();
+    if ($('player-container').style.display==='block') fecharPlayer();
+    else if ($('details-view').style.display==='block') fecharDetalhes();
+    else if ($('all-view').style.display==='block') voltarParaCategorias();
+    else if ($('channel-modal').classList.contains('active')) fecharChannelModal();
+    else if ($('search-modal').classList.contains('active')) fecharBusca();
+    else if ($('payment-modal').classList.contains('active')) fecharPaymentModal();
+    else if ($('account-modal').classList.contains('active')) fecharContaModal();
+    else if ($('diag-modal').classList.contains('active')) fecharDiagModal();
+    setTimeout(irFullscreen, 100);
+}
+
+async function carregarMenu(tipo) {
+    tipoAtual = tipo;
+    document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active-link'));
+    $('nav-'+tipo)?.classList.add('active-link');
+    fecharDetalhes(); fecharChannelModal(); fecharPlayer();
+    voltarFn = null; paginationData = []; paginationPage = 1;
+    ['home-view','vod-view','series-view','live-view','all-view'].forEach(id => $(id).style.display='none');
+    pararBanner();
+    if (tipo!=='home') navStack.push(tipo);
+    if (tipo==='home') { $('home-view').style.display='block'; await carregarHome(); if(bannerItems.length) iniciarBanner(); }
+    else if (tipo==='favorites') { $('all-view').style.display='block'; renderPagina(Object.values(favoritos), 'all-view', '⭐ Meus Favoritos'); }
+    else if (tipo==='continue') { $('all-view').style.display='block'; const itens=Object.values(historico).sort((a,b)=>b.timestamp-a.timestamp).map(h=>h.item).filter(Boolean); renderPagina(itens, 'all-view', '⏳ Continuar'); }
+    else if (tipo==='vod') { $('vod-view').style.display='block'; carregarFilmesSeries('vod'); }
+    else if (tipo==='series') { $('series-view').style.display='block'; carregarFilmesSeries('series'); }
+    else if (tipo==='live') { $('live-view').style.display='block'; carregarLive(); }
+}
+
+function renderPagina(lista, containerId, titulo) { paginationData=lista; paginationPage=1; renderPaginaAtual(containerId, titulo); }
+function renderPaginaAtual(containerId, titulo) {
+    const c=$(containerId);
+    const total=Math.max(1,Math.ceil(paginationData.length/ITEMS_POR_PAGINA));
+    if (paginationPage>total) paginationPage=total;
+    const start=(paginationPage-1)*ITEMS_POR_PAGINA;
+    const pageItems=paginationData.slice(start,start+ITEMS_POR_PAGINA);
+    const isAllView = containerId === 'all-view';
+    let html = `<button class="btn-back" onclick="voltarParaCategorias()">← Voltar</button>`;
+    html += `<h2 style="margin:16px 0 20px;font-size:1.6rem;font-weight:900;">${titulo} <span style="color:var(--muted);font-size:0.9rem;font-weight:400;">(${paginationData.length})</span></h2>`;
+    if (isAllView) html += `<div class="cover-grid" id="grid-track"></div>`;
+    else html += `<div class="carousel-container"><button class="carousel-arrow left" onclick="rolarCarrossel(this,-1)">❮</button><div class="carousel-track" id="grid-track"></div><button class="carousel-arrow right" onclick="rolarCarrossel(this,1)">❯</button></div>`;
+    if (total>1) {
+        html += `<div class="pagination">
+            <button onclick="irPagina(1)" ${paginationPage===1?'disabled':''}>«</button>
+            <button onclick="irPagina(${paginationPage-1})" ${paginationPage===1?'disabled':''}>❮</button>
+            <span class="pg-info">Página <strong>${paginationPage}</strong> de <strong>${total}</strong></span>
+            <button onclick="irPagina(${paginationPage+1})" ${paginationPage===total?'disabled':''}>❯</button>
+            <button onclick="irPagina(${total})" ${paginationPage===total?'disabled':''}>»</button>
+        </div>`;
+    }
+    c.innerHTML = html;
+    const track=$('grid-track');
+    if (!pageItems.length) { track.innerHTML='<p style="color:#777;text-align:center;padding:40px;">Sem conteúdos</p>'; return; }
+    const frag=document.createDocumentFragment(); pageItems.forEach(item=>frag.appendChild(criarCarta(item))); track.appendChild(frag);
+}
+function irPagina(p) { const total=Math.ceil(paginationData.length/ITEMS_POR_PAGINA); if(p<1||p>total) return; paginationPage=p; const titulo=document.querySelector('#all-view h2')?.textContent.split('(')[0].trim()||'Lista'; renderPaginaAtual('all-view', titulo); window.scrollTo({top:0,behavior:'smooth'}); }
+function rolarCarrossel(btn, dir) { const t=btn.parentElement.querySelector('.carousel-track'); t.scrollBy({left:t.clientWidth*0.85*dir,behavior:'smooth'}); }
+function voltarParaCategorias() { if(voltarFn) voltarFn(); else carregarMenu(tipoAtual); }
+function criarSecaoCarrossel(titulo, items, verTodos=null) {
+    const section=document.createElement('div'); section.className='section';
+    section.innerHTML=`<div class="section-header"><h3>${titulo}</h3>${verTodos?`<button class="view-all" onclick="${verTodos}">Ver Todos</button>`:''}</div><div class="carousel-container"><button class="carousel-arrow left" onclick="rolarCarrossel(this,-1)">❮</button><div class="carousel-track"></div><button class="carousel-arrow right" onclick="rolarCarrossel(this,1)">❯</button></div>`;
+    const track=section.querySelector('.carousel-track'); const frag=document.createDocumentFragment(); items.slice(0,20).forEach(item=>frag.appendChild(criarCarta(item))); track.appendChild(frag);
+    return section;
+}
+function criarCarta(item) {
+    const wrap=document.createElement('div'); wrap.className='card-wrap'; wrap.__item=item;
+    const img=item.stream_icon||item.cover||'';
+    const id=item.series_id?`${item.series_id}_${item.last_episode_id||''}`:item.stream_id;
+    const hist=historico[id]; const watched=hist?.duration>0&&(hist.time/hist.duration)>0.9;
+    let badges=''; if(item.container_extension==='ts'||item.container_extension==='mp4') badges+='<span class="card-badge hd">HD</span>';
+    if(item.rating&&Number(item.rating)>=4.5) badges+='<span class="card-badge top">TOP</span>';
+    if(item.stream_type==='live') badges='<span class="card-badge live">AO VIVO</span>';
+    let progress=''; if(hist?.duration>0&&!watched){const pct=(hist.time/hist.duration)*100;progress=`<div class="card-progress" style="width:${pct.toFixed(1)}%"></div>`;}
+    const safeName=(item.name||'').replace(/"/g,'&quot;').replace(/</g,'&lt;');
+    wrap.innerHTML=`${img?`<img data-src="${img}" alt="${safeName}" loading="lazy" decoding="async">`:''}${badges}${watched?'<div class="card-watched">✓</div>':''}${progress}<div class="card-info"><h4>${safeName}</h4>${item.rating?`<p>★ ${item.rating}</p>`:''}</div>`;
+    const imgEl=wrap.querySelector('img'); if(imgEl){if(imgObserver) imgObserver.observe(imgEl); else imgEl.src=img; lazyImg(imgEl);}
+    wrap.onclick=()=>abrirDetalhes(item); return wrap;
+}
+
+async function carregarCache() { if(searchCache.length) return searchCache; if(cacheVod.items&&cacheSeries.items){searchCache=[...cacheVod.items,...cacheSeries.items];return searchCache;} const items=[]; try{const cats=await obterCategorias('get_vod_categories');const proms=(cats||[]).slice(0,8).map(c=>obterConteudo('get_vod_streams','get_vod_categories',c.category_name));(await Promise.all(proms)).forEach(l=>items.push(...l));}catch(e){} searchCache=items; return items; }
+function abrirBusca() { $('search-modal').classList.add('active'); setTimeout(()=>$('search-input').focus(),100); carregarCache(); navStack.push('search'); }
+function fecharBusca() { $('search-modal').classList.remove('active'); $('search-input').value=''; $('search-results').innerHTML='<p style="text-align:center;color:#888;padding:20px;">Digite para buscar</p>'; if(navStack[navStack.length-1]==='search') navStack.pop(); setTimeout(irFullscreen,100); }
+const executarBuscaDebounced = debounce(executarBuscaRaw, 180);
+document.addEventListener('DOMContentLoaded', () => { const si=$('search-input'); if(si) si.addEventListener('input',e=>executarBuscaDebounced(e.target.value)); });
+function executarBuscaRaw(q) { if(!q||q.length<2) return; const query=q.toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,''); const results=searchCache.filter(item=>{const n=(item.name||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');return n.includes(query);}).slice(0,50); const c=$('search-results'); if(!results.length){c.innerHTML='<p style="text-align:center;color:#888;padding:20px;">Sem resultados</p>';return;} c.innerHTML=`<p style="color:var(--muted);font-size:0.8rem;padding:4px 8px;">${results.length} resultados</p>`+results.map((it,i)=>`<div class="search-item" onclick="abrirDetalhes(searchCache[${searchCache.indexOf(it)}]); fecharBusca();"><img data-src="${it.stream_icon||''}" alt="" loading="lazy" decoding="async"><div class="si-text"><h4>${(it.name||'').replace(/</g,'&lt;')}</h4><p>${it.series_id?'Série':'Filme'}${it.rating?' • ★ '+it.rating:''}</p></div></div>`).join(''); c.querySelectorAll('img').forEach(img=>{if(imgObserver) imgObserver.observe(img); lazyImg(img);}); }
+
+async function carregarFilmesSeries(tipo) {
+    const view=$(tipo+'-view'); const cache=tipo==='vod'?cacheVod:cacheSeries;
+    const apiCat=tipo==='vod'?'get_vod_categories':'get_series_categories'; const apiCont=tipo==='vod'?'get_vod_streams':'get_series';
+    if(cache.cats) renderSecoesFilmesSeries(view, cache.cats, tipo, apiCont);
+    else { view.innerHTML=Array(6).fill('<div class="skeleton" style="height:50px;margin-bottom:15px;"></div>').join(''); const cats=(await obterCategorias(apiCat)).slice(0,15); renderSecoesFilmesSeries(view, cats, tipo, apiCont); }
+}
+function renderSecoesFilmesSeries(view, cats, tipo, apiCont) {
+    view.innerHTML=''; const apiCat=tipo==='vod'?'get_vod_categories':'get_series_categories';
+    cats.forEach(cat => {
+        const sec=criarSecaoCarrossel(cat.category_name, [], `abrirTodos('${cat.category_name.replace(/'/g,"\\'")}','${tipo}')`);
+        view.appendChild(sec);
+        const track=sec.querySelector('.carousel-track');
+        track.innerHTML=Array(5).fill('<div class="card-wrap skeleton"></div>').join('');
+        obterConteudo(apiCont, apiCat, cat.category_name).then(items => {
+            track.innerHTML=''; const frag=document.createDocumentFragment(); items.slice(0,15).forEach(item=>frag.appendChild(criarCarta(item))); track.appendChild(frag);
+        });
+    });
+}
+function abrirTodos(nome, origem) {
+    navStack.push('categoria-'+nome);
+    ['vod-view','series-view','live-view','all-view'].forEach(id=>$(id).style.display='none');
+    $('all-view').style.display='block';
+    voltarFn=()=>{navStack.pop();carregarMenu(origem);};
+    const cache=origem==='vod'?cacheVod:cacheSeries; let items=cache.items?.filter(i=>i.category_name===nome)||[];
+    if(items.length) renderPagina(items, 'all-view', nome);
+    else { $('all-view').innerHTML='<div class="skeleton" style="height:400px;margin:20px;"></div>'; const apiCont=origem==='vod'?'get_vod_streams':'get_series'; const apiCat=origem==='vod'?'get_vod_categories':'get_series_categories'; obterConteudo(apiCont, apiCat, nome).then(items=>renderPagina(items,'all-view',nome)); }
+}
+
+async function carregarCatalogoCompleto() {
+    try {
+        const [vodCats, vodItems, serCats, serItems, live] = await Promise.all([obterCategorias('get_vod_categories'), obterTodosConteudos('get_vod_streams','get_vod_categories'), obterCategorias('get_series_categories'), obterTodosConteudos('get_series','get_series_categories'), obterTodosCanais()]);
+        cacheVod={cats:vodCats,items:vodItems}; cacheSeries={cats:serCats,items:serItems}; cacheLive=live;
+        searchCache=[...vodItems,...serItems];
+        toast(`☁️ ${vodItems.length} filmes, ${serItems.length} séries, ${live.length} canais`, 'success');
+    } catch(e) { console.error(e); }
+}
+async function carregarHome() {
+    $('home-sections').innerHTML=''; $('continue-section').style.display='none';
+    setupBanner();
+    const cont=Object.values(historico).filter(h=>h?.item&&h.time>30&&h.time<h.duration-60).sort((a,b)=>b.timestamp-a.timestamp).slice(0,10);
+    if(cont.length){
+        $('continue-section').style.display='block';
+        const frag=document.createDocumentFragment();
+        cont.forEach(h=>{
+            const pct=(h.time/h.duration)*100;
+            const div=document.createElement('div');
+            div.className='continue-card';
+            div.onclick=()=>abrirDetalhes(h.item);
+            div.innerHTML=`<img data-src="${h.item.stream_icon||h.item.cover||''}" alt="${(h.item.name||'').replace(/"/g,'')}" loading="lazy" decoding="async"><div class="continue-play"><button class="continue-play-btn">▶</button></div><div class="continue-info"><h4>${(h.item.name||'').replace(/</g,'&lt;')}</h4><p>${formatarTempo(h.time)} restantes</p></div><div class="continue-progress" style="width:${pct.toFixed(1)}%"></div>`;
+            const img=div.querySelector('img');
+            if(imgObserver)imgObserver.observe(img); lazyImg(img);
+            frag.appendChild(div);
+        });
+        $('continue-row').innerHTML=''; $('continue-row').appendChild(frag);
+    }
+    if(!cacheVod.items||!cacheVod.items.length){
+        carregarSecaoHome('vod','🎬 Filmes em Destaque');
+        carregarSecaoHome('series','🍿 Séries Imperdíveis');
+        return;
+    }
+    const topRatedMovies = cacheVod.items.filter(i => i.rating && Number(i.rating) >= 4).sort((a,b) => Number(b.rating) - Number(a.rating)).slice(0, 15);
+    if (topRatedMovies.length) $('home-sections').appendChild(criarSecaoCarrossel('⭐ Mais Bem Avaliados', topRatedMovies, "carregarMenu('vod')"));
+    const movCats = {};
+    cacheVod.items.forEach(i => { if (!movCats[i.category_name]) movCats[i.category_name] = []; movCats[i.category_name].push(i); });
+    const movCatKeys = Object.keys(movCats).slice(0, 4);
+    movCatKeys.forEach(catName => { if (movCats[catName] && movCats[catName].length >= 3) { const catSafe = catName.replace(/'/g, "\\'"); $('home-sections').appendChild(criarSecaoCarrossel(`🎬 ${catName}`, movCats[catName].slice(0, 15), `abrirTodos('${catSafe}','vod')`)); } });
+    const topSeries = cacheSeries.items.filter(i => i.rating && Number(i.rating) >= 4).sort((a,b) => Number(b.rating) - Number(a.rating)).slice(0, 15);
+    if (topSeries.length) $('home-sections').appendChild(criarSecaoCarrossel('⭐ Séries Top Avaliadas', topSeries, "carregarMenu('series')"));
+    const serCats = {};
+    cacheSeries.items.forEach(i => { if (!serCats[i.category_name]) serCats[i.category_name] = []; serCats[i.category_name].push(i); });
+    const serCatKeys = Object.keys(serCats).slice(0, 4);
+    serCatKeys.forEach(catName => { if (serCats[catName] && serCats[catName].length >= 3) { const catSafe = catName.replace(/'/g, "\\'"); $('home-sections').appendChild(criarSecaoCarrossel(`🍿 ${catName}`, serCats[catName].slice(0, 15), `abrirTodos('${catSafe}','series')`)); } });
+    if (cacheVod.items.length > 20) {
+        const randomMovies = shuffle(cacheVod.items).slice(0, 12);
+        $('home-sections').appendChild(criarSecaoCarrossel('🎲 Surpreenda-se', randomMovies, "carregarMenu('vod')"));
+    }
+}
+async function carregarSecaoHome(tipo, titulo) { const apiCat=tipo==='vod'?'get_vod_categories':'get_series_categories'; const apiCont=tipo==='vod'?'get_vod_streams':'get_series'; try{const c=await obterCategorias(apiCat);if(c[0]){const items=await obterConteudo(apiCont,apiCat,c[0].category_name);if(items.length){$('home-sections').appendChild(criarSecaoCarrossel(titulo,items.slice(0,12),`carregarMenu('${tipo}')`));}}}catch(e){} }
+async function setupBanner() {
+    let all=[]; if(cacheVod.items&&cacheVod.items.length){all=cacheVod.items.slice(0,30);}
+    else { try{const cats=await obterCategorias('get_vod_categories');for(const c of(cats||[]).slice(0,4)){const items=await obterConteudo('get_vod_streams','get_vod_categories',c.category_name);all.push(...items.slice(0,6));}}catch(e){} }
+    if(!all.length) return;
+    const selected=shuffle(all).slice(0,6);
+    bannerItems=await Promise.all(selected.map(async item => { try{const info=await buscarInfo(item); return {item, trailer:obterTrailer(info,item), info}; } catch(e){ return {item, trailer:null, info:{}}; } }));
+    const dots=$('hero-dots'); dots.innerHTML='';
+    bannerItems.forEach((_,i)=>{const d=document.createElement('div');d.className='hero-dot';d.onclick=()=>irBanner(i);dots.appendChild(d);});
+    mostrarBanner(0); if(bannerItems.length>1) iniciarBanner();
+}
+function mostrarBanner(idx) {
+    if(!bannerItems[idx]) return; bannerIdx=idx;
+    const {item,trailer,info}=bannerItems[idx];
+    const wrap=$('hero-trailer'); const iframe=$('hero-iframe'); const bg=item.stream_icon||item.cover||'';
+    if(trailer){iframe.style.display='block';iframe.src=`https://www.youtube-nocookie.com/embed/${trailer}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${trailer}&vq=hd720`;iframe.onload=()=>iframe.classList.add('loaded');}
+    else {iframe.style.display='none';iframe.removeAttribute('src');wrap.style.backgroundImage=bg?`url('${bg}')`:'';}
+    $('hero-banner').style.backgroundImage=bg?`url('${bg}')`:'';
+    $('hero-title').textContent=item.name||''; itemHero=item;
+    let meta=''; if(info?.info?.rating_5based) meta+=`<span class="star">★ ${Number(info.info.rating_5based).toFixed(1)}</span>`;
+    const year=(info?.info?.releaseDate||'').substring(0,4); if(/^\d{4}$/.test(year)) meta+=`<span>${year}</span>`;
+    if(info?.info?.genre) meta+=`<span>${String(info.info.genre).split(',')[0]}</span>`;
+    $('hero-meta').innerHTML=meta;
+    $('hero-desc').textContent=(info?.info?.plot||'').substring(0,250)||'Uma experiência cinematográfica espera por você.';
+    $('hero-play').onclick=()=>{const s=item.servidor_origem; if(!s) return; if(item.series_id!==undefined) abrirDetalhes(item); else if(item.stream_type==='live'||!item.container_extension){iniciarPlayer(`${s.host}/live/${s.user}/${s.pass}/${item.stream_id}.m3u8`,item);} else {iniciarPlayer(`${s.host}/movie/${s.user}/${s.pass}/${item.stream_id}.${item.container_extension}`,item);}};
+    const fav=!!favoritos[item.stream_id||item.series_id]; const btn=$('hero-fav'); btn.classList.toggle('favorited',fav); btn.innerHTML=fav?'✓ Em Minha Lista':'⭐ Minha Lista';
+    document.querySelectorAll('.hero-dot').forEach((d,i)=>d.classList.toggle('active',i===idx));
+}
+function irBanner(i) { if(bannerInterval) clearInterval(bannerInterval); mostrarBanner(i); iniciarBanner(); }
+function iniciarBanner() { if(bannerInterval) clearInterval(bannerInterval); if(bannerItems.length<=1) return; bannerInterval=setInterval(()=>{mostrarBanner((bannerIdx+1)%bannerItems.length);}, TEMPO_BANNER); }
+function pararBanner() { if(bannerInterval) clearInterval(bannerInterval); bannerInterval=null; const iframe=$('hero-iframe'); if(iframe) iframe.removeAttribute('src'); }
+function toggleHeroFav() { if(!itemHero) return; toggleFav(itemHero,$('hero-fav')); const f=!!favoritos[itemHero.stream_id||itemHero.series_id]; const btn=$('hero-fav'); btn.classList.toggle('favorited',f); btn.innerHTML=f?'✓ Em Minha Lista':'⭐ Minha Lista'; }
+function abrirHeroDetalhes() { if(itemHero) abrirDetalhes(itemHero); }
+function toggleFav(item, btn) { const id=item.stream_id||item.series_id; if(!id) return; if(favoritos[id]){delete favoritos[id]; if(btn){btn.classList.remove('favorited');btn.innerHTML='⭐ Salvar';} toast('Removido');} else {favoritos[id]=item; if(btn){btn.classList.add('favorited');btn.innerHTML='✓ Salvo';} toast('⭐ Adicionado','success');} salvarDados(); }
+
+async function abrirDetalhes(item) {
+    if (!verificarAcesso()) return;
+    pararBanner(); navStack.push('detalhes'); itemSelecionado=item;
+    $('details-view').style.display='block'; document.body.style.overflow='hidden';
+    const img=item.stream_icon||item.cover||'';
+    $('details-hero').style.backgroundImage=`url('${img}')`;
+    $('detail-title').textContent=item.name||''; $('detail-desc').textContent='Carregando...';
+    $('detail-meta').innerHTML=''; $('episodes-list').style.display='none'; $('episodes-list').innerHTML='';
+    const btnPlay=$('btn-play'); const s=item.servidor_origem; if(!s) return;
+    const isSerie=item.series_id!==undefined; const isVod=!isSerie&&item.container_extension; const isLive=!isSerie&&!item.container_extension;
+    if(isLive){btnPlay.style.display='';btnPlay.textContent='▶ Ao Vivo';btnPlay.onclick=()=>iniciarPlayer(`${s.host}/live/${s.user}/${s.pass}/${item.stream_id}.m3u8`,item);$('detail-desc').textContent='Transmissão ao vivo.';}
+    else if(isVod){btnPlay.style.display='';btnPlay.onclick=()=>iniciarPlayer(`${s.host}/movie/${s.user}/${s.pass}/${item.stream_id}.${item.container_extension}`,item);try{const r=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=get_vod_info&vod_id=${item.stream_id}`);const data=await r.json();$('detail-desc').textContent=data.info?.plot||'Sem sinopse.';renderMeta(data.info);}catch(e){}}
+    else if(isSerie){btnPlay.style.display='none';try{const r=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=get_series_info&series_id=${item.series_id}`);const data=await r.json();$('detail-desc').textContent=data.info?.plot||'Sem sinopse.';renderMeta(data.info);const epList=$('episodes-list');epList.style.display='block';let allEps=[];for(const t in data.episodes||{}){const h4=document.createElement('h4');h4.style.cssText='color:var(--primary);margin:18px 0 8px;font-size:1rem;';h4.textContent=`Temporada ${t}`;epList.appendChild(h4);data.episodes[t].forEach(ep=>{const div=document.createElement('div');div.className='episode-btn';const hist=historico[`${item.series_id}_${ep.id}`];const epObj={...ep,season:t,series_id:item.series_id,servidor_origem:s,serieName:item.name};allEps.push(epObj);div.innerHTML=`<span class="ep-title"><strong>${ep.episode_num}.</strong> ${ep.title}</span>${hist?`<span style="color:var(--warning)">⏱ ${formatarTempo(hist.time)}</span>`:'<span style="color:var(--primary)">▶</span>'}`;div.onclick=()=>{const idx=allEps.findIndex(e=>e.id===ep.id);if(idx>=0&&idx<allEps.length-1) proximoEpi=allEps[idx+1];iniciarPlayer(`${s.host}/series/${s.user}/${s.pass}/${ep.id}.${ep.container_extension}`,item,ep.id);};epList.appendChild(div);});}}catch(e){}}
+    const fav=!!favoritos[item.stream_id||item.series_id]; const fb=$('btn-fav'); fb.classList.toggle('favorited',fav); fb.innerHTML=fav?'✓ Em Minha Lista':'⭐ Favoritar';
+    const info=await buscarInfo(item); showTrailer(item,info);
+}
+function verificarAcesso() { if(isAdminUser()||(statusPlano&&statusPlano.acesso)) return true; toast('⚠️ Plano expirado','error'); abrirContaModal(); return false; }
+function renderMeta(info) { if(!info) return; let html=''; if(info.rating_5based) html+=`<div class="meta-item"><div class="label">Avaliação</div><div class="value">★ ${Number(info.rating_5based).toFixed(1)}</div></div>`; const y=(info.releaseDate||'').substring(0,4); if(/^\d{4}$/.test(y)) html+=`<div class="meta-item"><div class="label">Ano</div><div class="value">${y}</div></div>`; if(info.genre) html+=`<div class="meta-item"><div class="label">Gênero</div><div class="value">${String(info.genre).split(',')[0]}</div></div>`; if(info.duration) html+=`<div class="meta-item"><div class="label">Duração</div><div class="value">${info.duration}</div></div>`; $('detail-meta').innerHTML=html; }
+function showTrailer(item, info) { const box=$('trailer-container'); box.innerHTML=''; const t=obterTrailer(info,item); if(!t){const bg=item.stream_icon||item.cover; if(bg) box.style.backgroundImage=`url('${bg}')`; return;} box.style.backgroundImage=''; const iframe=document.createElement('iframe'); iframe.allow='autoplay; encrypted-media'; iframe.title='Trailer'; iframe.loading='lazy'; iframe.src=`https://www.youtube-nocookie.com/embed/${t}?autoplay=1&mute=1&controls=0&rel=0&modestbranding=1&playsinline=1&loop=1&playlist=${t}&vq=hd720`; iframe.onload=()=>iframe.classList.add('loaded'); box.appendChild(iframe); }
+function fecharDetalhes() { $('details-view').style.display='none'; $('trailer-container').innerHTML=''; document.body.style.overflow='auto'; if(navStack[navStack.length-1]==='detalhes') navStack.pop(); if(tipoAtual==='home'&&bannerItems.length) iniciarBanner(); setTimeout(irFullscreen,100); }
+function toggleDetailFav() { if(!itemSelecionado) return; toggleFav(itemSelecionado,$('btn-fav')); const f=!!favoritos[itemSelecionado.stream_id||itemSelecionado.series_id]; const btn=$('btn-fav'); btn.classList.toggle('favorited',f); btn.innerHTML=f?'✓ Em Minha Lista':'⭐ Favoritar'; }
+
+const CAT_CANAIS={esportes:{nome:'Esportes',icon:'⚽',kw:['SPORTV','ESPN','FOX','BANDSPORTS','PREMIERE','COMBATE']},noticias:{nome:'Notícias',icon:'📰',kw:['GLOBO NEWS','BAND NEWS','CNN','JOVEM PAN','JORNAL']},filmes:{nome:'Filmes',icon:'🎬',kw:['HBO','MAX','TELECINE','PARAMOUNT','WARNER']},infantil:{nome:'Infantil',icon:'🧸',kw:['CARTOON','DISCOVERY KIDS','NICK','GLOOB']},series:{nome:'Séries',icon:'🍿',kw:['SONY','AXN','TNT','SPACE','A&E']},musica:{nome:'Música',icon:'🎵',kw:['MTV','MULTISHOW']},variedades:{nome:'Variedades',icon:'📺',kw:['SBT','RECORD','BAND','GNT']}};
+function detCatCanal(n) { n=(n||'').toUpperCase(); for(const [k,c] of Object.entries(CAT_CANAIS)) if(c.kw.some(w=>n.includes(w))) return k; return 'variedades'; }
+async function obterTodosCanais() { const todos=[]; const v=new Set(); await Promise.all(servidores.map(async s => { try{const r=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=get_live_streams`); const d=await r.json(); if(Array.isArray(d)) d.forEach(c => { const n=(c.name||c.title||'').trim(); if(!v.has(n)&&n){v.add(n); c.servidor_origem=s; c._nome=n; c._cat=detCatCanal(n); todos.push(c);} }); } catch(e) {} })); return todos; }
+async function carregarLive() { if(!cacheLive){$('live-content').innerHTML='<div class="skeleton" style="height:300px;"></div>'; cacheLive=await obterTodosCanais();} todosCanais=cacheLive; renderLive(); }
+function renderLive() { const cont={todos:todosCanais.length}; Object.keys(CAT_CANAIS).forEach(k=>cont[k]=todosCanais.filter(c=>c._cat===k).length); $('live-content').innerHTML=`<div class="live-header"><h2><span class="live-badge">AO VIVO</span> Programação</h2><button class="btn-secondary" style="width:auto;padding:8px 16px;border-radius:50px;" onclick="carregarLive()">🔄 Atualizar</button></div><div class="live-filters"><button class="live-filter ${liveFiltro==='todos'?'active':''}" onclick="filtrarLive('todos',this)">📺 Todos (${cont.todos})</button>${Object.entries(CAT_CANAIS).map(([k,c])=>cont[k]>0?`<button class="live-filter ${liveFiltro===k?'active':''}" onclick="filtrarLive('${k}',this)">${c.icon} ${c.nome} (${cont[k]})</button>`:'').join('')}</div><div class="live-grid" id="live-grid"></div>`; renderLiveCards(); }
+function renderLiveCards() { const cs=liveFiltro==='todos'?todosCanais:todosCanais.filter(c=>c._cat===liveFiltro); const grid=$('live-grid'); if(!cs.length){grid.innerHTML='<p style="color:#888;text-align:center;padding:40px;">Nenhum canal</p>';return;} const limit=cs.slice(0,100); const frag=document.createDocumentFragment(); limit.forEach(c => { const cat=CAT_CANAIS[c._cat]||{nome:'TV',icon:'📺'}; const prog=gerarProg(c); const m=new Date().getHours()*60+new Date().getMinutes(); const atual=prog.find(p=>m>=p.inicio&&m<p.fim)||prog[0]; const progPct=Math.min(100,Math.max(0,((m-atual.inicio)/atual.duracao)*100)); const safeName=(c._nome||'').replace(/</g,'&lt;'); const div=document.createElement('div'); div.className='live-card'; div.onclick=()=>abrirChannel(c.stream_id); div.innerHTML=`<div class="live-card-header"><div class="live-logo">${c.stream_icon?`<img data-src="${c.stream_icon}" alt="${safeName}" loading="lazy" decoding="async">`:`<span class="live-logo-placeholder">${(c._nome||'TV').substring(0,2).toUpperCase()}</span>`}</div><div class="live-info"><h3>${safeName}</h3><p>${cat.icon} ${cat.nome}</p></div><button class="live-play" onclick="event.stopPropagation();playDireto(${c.stream_id})">▶</button></div><div class="live-programming"><div class="now-playing"><span class="now-playing-badge">Agora</span><span class="now-playing-text">${atual.titulo}</span></div><div class="live-progress"><div class="live-progress-fill" style="width:${progPct.toFixed(1)}%"></div></div></div>`; const img=div.querySelector('img'); if(img){if(imgObserver) imgObserver.observe(img); lazyImg(img);} frag.appendChild(div); }); grid.innerHTML=''; grid.appendChild(frag); }
+function gerarProg(canal) { if(canal._prog) return canal._prog; const seed=(canal.stream_id||0)*1000; const progs=[]; let m=0, s=seed; const rand=()=>{s=(s*9301+49297)%233280; return s/233280;}; const templates={esportes:['Futebol','NBA','UFC','Pré-Jogo'],noticias:['Jornal','Boletim','Debate'],filmes:['Filme: Ação','Cinema','Comédia'],infantil:['Desenhos','Aventuras'],series:['Série Temporada','Maratona'],musica:['Top 10','Clipes','Show'],variedades:['Auditório','Novela','Game Show']}; const lista=templates[canal._cat]||templates.variedades; while(m<1440){const dur=[30,60,90,120][Math.floor(rand()*4)]; const fim=Math.min(m+dur,1440); progs.push({inicio:m,fim,titulo:lista[Math.floor(rand()*lista.length)],duracao:fim-m}); m=fim;} canal._prog=progs; return progs; }
+function filtrarLive(f, btn) { liveFiltro=f; document.querySelectorAll('.live-filter').forEach(b=>b.classList.remove('active')); if(btn) btn.classList.add('active'); else document.querySelector(`.live-filter[onclick*="${f}"]`)?.classList.add('active'); renderLiveCards(); }
+function playDireto(streamId) { const c=todosCanais.find(x=>x.stream_id==streamId); if(!c) return; if($('channel-modal').classList.contains('active')) fecharChannelModal(); if(!verificarAcesso()) return; iniciarPlayer(`${c.servidor_origem.host}/live/${c.servidor_origem.user}/${c.servidor_origem.pass}/${c.stream_id}.m3u8`,c); }
+function abrirChannel(streamId) { const c=todosCanais.find(x=>x.stream_id==streamId); if(!c) return; canalAtual=c; navStack.push('canal'); const cat=CAT_CANAIS[c._cat]||{nome:'TV',icon:'📺'}; $('channel-logo').innerHTML=c.stream_icon?`<img data-src="${c.stream_icon}" alt="" loading="lazy">`:`<span class="live-logo-placeholder">${(c._nome||'TV').substring(0,2).toUpperCase()}</span>`; const logoImg=$('channel-logo').querySelector('img'); if(logoImg){if(imgObserver) imgObserver.observe(logoImg); lazyImg(logoImg);} $('channel-title').textContent=c._nome; $('channel-cat').textContent=`${cat.icon} ${cat.nome}`; $('channel-player').innerHTML='<p style="color:#aaa;">📺 Pronto</p>'; const progs=gerarProg(c); const m=new Date().getHours()*60+new Date().getMinutes(); $('schedule-list').innerHTML=progs.map(p=>`<div class="schedule-item ${m>=p.inicio&&m<p.fim?'current':''}"><div class="schedule-time">${String(Math.floor(p.inicio/60)).padStart(2,'0')}:${String(p.inicio%60).padStart(2,'0')}</div><div class="schedule-info"><div class="title">${p.titulo}</div><div class="dur">${p.duracao}min</div></div></div>`).join(''); $('channel-modal').classList.add('active'); }
+function fecharChannelModal() { $('channel-modal').classList.remove('active'); const pc=$('channel-player'); const v=pc.querySelector('video'); if(v){v.pause();v.removeAttribute('src');v.load();} pc.innerHTML='<p style="color:#aaa;">📺 Pronto</p>'; canalAtual=null; if(navStack[navStack.length-1]==='canal') navStack.pop(); setTimeout(irFullscreen,100); }
+function playChannel() { if(!canalAtual||!verificarAcesso()) return; const c=canalAtual; $('channel-player').innerHTML='<video id="channel-video" controls autoplay playsinline style="width:100%;height:100%;"></video>'; const v=$('channel-video'); const url=`${c.servidor_origem.host}/live/${c.servidor_origem.user}/${c.servidor_origem.pass}/${c.stream_id}.m3u8`; if(Hls.isSupported()&&url.includes('.m3u8')){const hls=new Hls();hls.loadSource(url);hls.attachMedia(v);} else {v.src=url;} v.play().catch(()=>{}); }
+function openChannelFullscreen() { if(!canalAtual) return; const id=canalAtual.stream_id; fecharChannelModal(); playDireto(id); }
+
+let plyrInstance = null;
+async function carregarDependenciasPlayer() { if(window.Hls&&window.Plyr) return; await Promise.all([new Promise((resolve,reject)=>{if(window.Hls)return resolve(); const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/hls.js@latest'; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);}), new Promise((resolve,reject)=>{if(window.Plyr)return resolve(); const l=document.createElement('link'); l.rel='stylesheet'; l.href='https://cdn.plyr.io/3.7.8/plyr.css'; document.head.appendChild(l); const s=document.createElement('script'); s.src='https://cdn.plyr.io/3.7.8/plyr.polyfilled.js'; s.onload=resolve; s.onerror=reject; document.head.appendChild(s);})]); }
+async function iniciarPlayer(url, item, epId=null) {
+    if (!verificarAcesso()) return;
+    navStack.push('player');
+    $('autoplay-next').classList.remove('show'); $('skip-intro').classList.remove('show');
+    if(autoplayInterval) clearInterval(autoplayInterval); if(autoplayTimeout) clearTimeout(autoplayTimeout);
+    if(skipIntroTimer) clearTimeout(skipIntroTimer); if(skipIntroHideTimer) clearTimeout(skipIntroHideTimer);
+    const container=$('player-container'); container.style.display='block';
+    try { if(container.requestFullscreen) await container.requestFullscreen(); else if(container.webkitRequestFullscreen) container.webkitRequestFullscreen(); } catch(e) {}
+    pararBanner();
+    container.innerHTML=`<div class="video-wrapper"><button class="btn-player-back" id="btn-back-player" onclick="fecharPlayer()">← Voltar</button><div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#000;"><div style="text-align:center;"><div class="btn-spinner" style="border-color:rgba(255,255,255,0.2);border-top-color:#00e5ff;width:40px;height:40px;margin:0 auto 12px;"></div><p style="color:#aaa;">Carregando...</p></div></div></div>`;
+    await carregarDependenciasPlayer();
+    container.innerHTML=`<div class="video-wrapper"><button class="btn-player-back" id="btn-back-player" onclick="fecharPlayer()">← Voltar</button><video id="main-video" playsinline></video><button class="skip-intro" id="skip-intro" onclick="pularIntro()">⏭ Pular</button><div class="autoplay-next" id="autoplay-next"><h4 id="autoplay-title">Próximo</h4><div class="autoplay-actions"><button onclick="cancelarAutoplay()">Cancelar</button><button class="btn-secondary" onclick="proximoEpisodioPlay()">▶ Assistir</button></div></div></div>`;
+    setupPlayerControls();
+    const video=$('main-video'); if(playerHls) playerHls.destroy(); if(plyrInstance) plyrInstance.destroy();
+    const pOpt={controls:['play-large','play','progress','current-time','duration','mute','volume','fullscreen','settings'],settings:['quality','speed'],autoplay:true};
+    if(Hls.isSupported()&&url.includes('.m3u8')){playerHls=new Hls({enableWorker:true,lowLatencyMode:true});playerHls.loadSource(url);playerHls.attachMedia(video);playerHls.on(Hls.Events.MANIFEST_PARSED,(e,d)=>{hlsLevels=d.levels;});plyrInstance=new Plyr(video,pOpt);video.play().catch(()=>{});} else {video.src=url;plyrInstance=new Plyr(video,pOpt);video.play().catch(()=>{});}
+    const uniqueId=epId?`${item.series_id}_${epId}`:item.stream_id; if(epId) item.last_episode_id=epId;
+    plyrInstance.on('loadedmetadata', () => {
+        const hist=historico[uniqueId];
+        if(hist?.time>0&&hist.time<plyrInstance.duration-30) plyrInstance.currentTime=hist.time;
+        if(skipIntroTimer) clearTimeout(skipIntroTimer); if(skipIntroHideTimer) clearTimeout(skipIntroHideTimer);
+        const isVod = item.series_id !== undefined || (item.container_extension && item.container_extension !== '');
+        if (!isVod) return;
+        skipIntroTimer = setTimeout(() => { if (plyrInstance.currentTime > 5 && plyrInstance.currentTime < SKIP_INTRO_MAX_TIME) { $('skip-intro').classList.add('show'); skipIntroHideTimer = setTimeout(() => $('skip-intro').classList.remove('show'), SKIP_INTRO_HIDE_DELAY); } }, SKIP_INTRO_SHOW_DELAY);
+    });
+    let lastSave=0;
+    plyrInstance.on('timeupdate', () => {
+        const ct=plyrInstance.currentTime; const dur=plyrInstance.duration;
+        if(ct>5&&dur>0){historico[uniqueId]={time:ct,duration:dur,item,timestamp:Date.now()}; if(Math.floor(ct)-lastSave>=10){lastSave=Math.floor(ct);salvarDados();}}
+        if (ct > SKIP_INTRO_MAX_TIME + 5 && $('skip-intro').classList.contains('show')) { $('skip-intro').classList.remove('show'); if(skipIntroHideTimer) clearTimeout(skipIntroHideTimer); }
+        if(proximoEpi&&dur-ct<15&&dur-ct>0&&!$('autoplay-next').classList.contains('show')) mostrarAutoplay(proximoEpi);
+    });
+    plyrInstance.on('ended', () => { if(proximoEpi?.id) mostrarAutoplay(proximoEpi); else fecharPlayer(); });
+    setTimeout(()=>{if(!document.fullscreenElement) irFullscreen();},500);
+}
+function pularIntro() { const v=$('main-video'); if(v){v.currentTime+=SKIP_INTRO_TIME; $('skip-intro').classList.remove('show'); if(skipIntroHideTimer) clearTimeout(skipIntroHideTimer); toast('⏭ Abertura pulada'); } }
+function mostrarAutoplay(p) { $('autoplay-title').textContent=`T${p.season}:E${p.episode_num} - ${p.title}`; $('autoplay-next').classList.add('show'); if(autoplayInterval) clearInterval(autoplayInterval); if(autoplayTimeout) clearTimeout(autoplayTimeout); autoplayTimeout=setTimeout(proximoEpisodioPlay,15000); }
+function cancelarAutoplay() { $('autoplay-next').classList.remove('show'); if(autoplayInterval) clearInterval(autoplayInterval); if(autoplayTimeout) clearTimeout(autoplayTimeout); }
+function proximoEpisodioPlay() { if(!proximoEpi) return; const s=proximoEpi.servidor_origem; iniciarPlayer(`${s.host}/series/${s.user}/${s.pass}/${proximoEpi.id}.${proximoEpi.container_extension}`, {series_id:proximoEpi.series_id,name:proximoEpi.serieName}, proximoEpi.id); }
+function fecharPlayer() {
+    salvarDados();
+    if(autoplayInterval) clearInterval(autoplayInterval); if(autoplayTimeout) clearTimeout(autoplayTimeout);
+    if(skipIntroTimer) clearTimeout(skipIntroTimer); if(skipIntroHideTimer) clearTimeout(skipIntroHideTimer);
+    try{if(document.fullscreenElement) document.exitFullscreen?.();}catch(e){}
+    const v=$('main-video'); if(v){v.pause();v.removeAttribute('src');v.load();}
+    if(playerHls){playerHls.destroy();playerHls=null;}
+    if(plyrInstance){plyrInstance.destroy();plyrInstance=null;}
+    $('player-container').style.display='none';
+    $('autoplay-next').classList.remove('show'); $('skip-intro').classList.remove('show');
+    if(navStack[navStack.length-1]==='player') navStack.pop();
+    if(tipoAtual==='home'&&bannerItems.length) iniciarBanner();
+    setTimeout(irFullscreen,200);
+}
+
+async function buscarInfo(item) { const s=item?.servidor_origem; if(!s) return {}; try{const a=item.series_id!==undefined?'get_series_info':'get_vod_info'; const p=item.series_id!==undefined?`&series_id=${item.series_id}`:`&vod_id=${item.stream_id}`; const c=new AbortController(); const t=setTimeout(()=>c.abort(),10000); const url = `${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=${a}${p}`; const r=await fetch(url,{signal:c.signal}); clearTimeout(t); return r.ok?await r.json():{};}catch(e){return {};} }
+async function obterCategorias(api) { const all=[]; const v=new Set(); await Promise.all(servidores.map(async s => { try{const c=new AbortController(); const t=setTimeout(()=>c.abort(),10000); const r=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=${api}`,{signal:c.signal}); clearTimeout(t); const d=await r.json(); if(Array.isArray(d)) d.forEach(c=>{if(!v.has(c.category_name)){v.add(c.category_name);all.push(c);}});}catch(e){} })); return all; }
+async function obterConteudo(apiC, apiCat, nome) { const all=[]; const v=new Set(); await Promise.all(servidores.map(async s => { try{const c=new AbortController(); const t=setTimeout(()=>c.abort(),15000); const rc=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=${apiCat}`,{signal:c.signal}); clearTimeout(t); const cat=(await rc.json()).find(c=>c.category_name===nome); if(cat){const c2=new AbortController(); const t2=setTimeout(()=>c2.abort(),15000); const ri=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=${apiC}&category_id=${cat.category_id}`,{signal:c2.signal}); clearTimeout(t2); const it=await ri.json(); if(Array.isArray(it)) it.forEach(i=>{const n=i.name||i.title; if(!v.has(n)){v.add(n); i.servidor_origem=s; all.push(i);}});}}catch(e){} })); return all; }
+async function obterTodosConteudos(apiC, apiCat) { const cats=await obterCategorias(apiCat); const all=[]; const v=new Set(); await Promise.all(cats.map(async cat => { try{await Promise.all(servidores.map(async s => { try{const c=new AbortController(); const t=setTimeout(()=>c.abort(),15000); const ri=await fetch(`${s.host}/player_api.php?username=${s.user}&password=${s.pass}&action=${apiC}&category_id=${cat.category_id}`,{signal:c.signal}); clearTimeout(t); const it=await ri.json(); if(Array.isArray(it)) it.forEach(i=>{const n=i.name||i.title; if(!v.has(n)){v.add(n); i.servidor_origem=s; i.category_name=cat.category_name; all.push(i);}});}catch(e){} }));}catch(e){} })); return all; }
+
+document.addEventListener('keydown', e => {
+    if(['INPUT','TEXTAREA'].includes(e.target.tagName)){if(e.key==='Enter'&&['login-user','login-pass','login-pass2','login-email'].includes(e.target.id)) submeterAuth(); return;}
+    const video=$('main-video'); const playerAtivo=$('player-container').style.display==='block';
+    switch(e.key){
+        case 'Escape': case 'Backspace': case 'GoBack': e.preventDefault(); voltarNavegacao(); setTimeout(irFullscreen,150); break;
+        case ' ': if(playerAtivo&&video){e.preventDefault(); video.paused?video.play():video.pause();} break;
+        case 'm': case 'M': if(playerAtivo&&video) video.muted=!video.muted; break;
+        case 'f': case 'F': if(playerAtivo){e.preventDefault(); if(document.fullscreenElement) document.exitFullscreen(); else $('player-container').requestFullscreen?.();} break;
+        case 'ArrowLeft': if(playerAtivo&&video) video.currentTime=Math.max(0,video.currentTime-10); else if(bannerItems.length>1) irBanner((bannerIdx-1+bannerItems.length)%bannerItems.length); break;
+        case 'ArrowRight': if(playerAtivo&&video) video.currentTime=video.currentTime+10; else if(bannerItems.length>1) irBanner((bannerIdx+1)%bannerItems.length); break;
+        case 'ArrowUp': if(playerAtivo&&video) video.volume=Math.min(1,video.volume+0.1); break;
+        case 'ArrowDown': if(playerAtivo&&video) video.volume=Math.max(0,video.volume-0.1); break;
+        case '/': e.preventDefault(); abrirBusca(); break;
+    }
+});
+
+setInterval(() => { if(tipoAtual==='live'&&$('live-grid')) renderLiveCards(); }, 60000);
+
+window.addEventListener('DOMContentLoaded', () => {
+    initImgObserver();
+    setupActivity();
+    setupTVNav();
+    setupTouch();
+    checarManutencaoPublica();
+    checarBroadcastPublico();
+    tentarAutoLogin();
+});
+</script>
+
+<script src="servidores.js"></script>
+</body>
+</html>
